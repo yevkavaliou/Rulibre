@@ -110,7 +110,12 @@ not done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: added `crates/rulibre-ui` to workspace members only, with the planned module skeleton, inherited package metadata, `publish = false`, core dependency, iced 0.14 and env_logger. The five requested features were confirmed against https://docs.rs/crate/iced/0.14.0/features; default renderer/window-system features are retained.
+- Startup uses native decorations, title "Rulibre", size 1100×700, minimum 760×520, dark theme and a centered placeholder. No library or device operations are implemented.
+- Added `.github/workflows/ui.yml`: Windows, Ubuntu 24.04 and macOS run `scripts/check-ui.ps1`, with Linux Wayland/X11, xkbcommon and Vulkan packages and uploaded logs. Linux package installation still needs runner verification.
+- Local Windows checks passed: `cargo fmt --all -- --check`, `cargo clippy --locked --all-targets -- -D warnings`, `cargo test --locked`, and `scripts/check-ui.ps1` (locked UI build, Clippy with all targets, UI tests, workspace formatting). UI currently has no behavioural tests because this item adds only a placeholder; default workspace has 100 passing tests and 3 ignored tests.
+- `cargo run -p rulibre-ui --locked` was executed on Windows: process 7484 created an OS window with title "Rulibre", a nonzero window handle and `Responding = True`. Visual layout and minimum-size resizing have not been manually verified. Startup logged a malformed system font warning for `mstmc.ttf`; it did not prevent window creation.
+- Remote CI is pending. Status remains `not done` until all three UI matrix jobs pass. No physical reader verification was performed.
 
 ---
 
