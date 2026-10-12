@@ -1,0 +1,13 @@
+JPEG count=200 size=240x360 encoded_bytes=2163988 rgba_bytes=69120000 decode_and_handles_ms=6784.544
+effect Mica: Ok(())
+screenshot=D:\Programming\rulibre-fork\docs\spike-results\windows-dx12\phase-0-Mica.png scale=1
+redraw_intervals phase=1 effect=Mica n=89 mean_ms=8.491 p95_ms=6.335
+effect Off: Ok(())
+screenshot=D:\Programming\rulibre-fork\docs\spike-results\windows-dx12\phase-1-Off.png scale=1
+redraw_intervals phase=2 effect=Off n=89 mean_ms=8.424 p95_ms=5.868
+effect Acrylic: Ok(())
+screenshot=D:\Programming\rulibre-fork\docs\spike-results\windows-dx12\phase-2-Acrylic.png scale=1
+redraw_intervals phase=3 effect=Acrylic n=89 mean_ms=8.431 p95_ms=5.895
+effect Off: Ok(())
+screenshot=D:\Programming\rulibre-fork\docs\spike-results\windows-dx12\phase-3-Off.png scale=1
+redraw_intervals phase=4 effect=Off n=89 mean_ms=8.364 p95_ms=5.858

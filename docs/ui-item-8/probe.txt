@@ -1,0 +1,43 @@
+   Compiling rulibre-ui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-ui)
+warning: eliding a lifetime that's named elsewhere is confusing
+   --> crates\rulibre-ui\src\widgets\shell.rs:101:14
+    |
+ 97 |     label: &'static str,
+    |             ------- the lifetime is named here
+...
+101 | ) -> Element<'_, Message> {
+    |              ^^ the same lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: consistently use `'static`
+    |
+101 - ) -> Element<'_, Message> {
+101 + ) -> Element<'static, Message> {
+    |
+
+warning: `rulibre-ui` (lib) generated 1 warning (run `cargo fix --lib -p rulibre-ui` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.41s
+     Running `target\debug\examples\navigation_probe.exe`
+real fixture scan: six books; every format/author navigation verified
+capture docs/ui-item-8/home.png 1100x700
+capture docs/ui-item-8/format.png 760x520
+capture docs/ui-item-8/author.png 760x520
+capture docs/ui-item-8/search-empty.png 760x520
+capture docs/ui-item-8/search-cyrillic.png 760x520
+capture docs/ui-item-8/search-polish.png 760x520
+capture docs/ui-item-8/jobs.png 760x520
+capture docs/ui-item-8/settings.png 760x520
+capture docs/ui-item-8/search-restored.png 760x520
+search_round_trip query=К ms=8.379
+search_round_trip query=Кн ms=8.307
+search_round_trip query=Кни ms=9.064
+search_round_trip query=Книга ms=9.977
+search_round_trip query=Книга 1 ms=9.980
+search_round_trip query=Ł ms=17.624
+search_round_trip query=Łó ms=15.940
+search_round_trip query=Łódź ms=15.463
+search_round_trip query=Математика ms=11.791
+capture docs/ui-item-8/search-20k.png 760x520
+20k search_round_trip n=9 mean_ms=11.836 max_ms=17.624
+fixture library contents unchanged; no physical reader used

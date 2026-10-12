@@ -1,0 +1,3 @@
+real_cover_sources=6 catalog_entries=5000 cache_before=0
+completed elapsed_s=222.093 max_handles=300 max_workers=4 heartbeat_n=13705 mean_ms=16.003 p95_ms=17.314 max_ms=76.319
+cache_after=5000

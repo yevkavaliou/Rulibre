@@ -1,0 +1,2 @@
+[2026-10-12T14:36:44Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.
+[2026-10-12T14:36:44Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.

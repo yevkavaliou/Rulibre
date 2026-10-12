@@ -1,0 +1,64 @@
+[2026-10-12T10:03:48Z INFO  iced_winit] System theme: None
+[2026-10-12T10:03:48Z INFO  iced_winit] Window attributes for id `Id(
+        1,
+    )`: WindowAttributes {
+        inner_size: Some(
+            Logical(
+                LogicalSize {
+                    width: 1100.0,
+                    height: 700.0,
+                },
+            ),
+        ),
+        min_inner_size: Some(
+            Logical(
+                LogicalSize {
+                    width: 760.0,
+                    height: 520.0,
+                },
+            ),
+        ),
+        max_inner_size: None,
+        position: None,
+        resizable: true,
+        enabled_buttons: WindowButtons(
+            CLOSE | MINIMIZE | MAXIMIZE,
+        ),
+        title: "Rulibre · item 2 capability spike",
+        maximized: false,
+        visible: false,
+        transparent: true,
+        blur: false,
+        decorations: true,
+        window_icon: None,
+        preferred_theme: None,
+        resize_increments: None,
+        content_protected: false,
+        window_level: Normal,
+        active: true,
+        cursor: Icon(
+            Default,
+        ),
+        parent_window: None,
+        fullscreen: None,
+        platform_specific: PlatformSpecificWindowAttributes {
+            owner: None,
+            menu: None,
+            taskbar_icon: None,
+            no_redirection_bitmap: false,
+            drag_and_drop: true,
+            skip_taskbar: false,
+            class_name: "Window Class",
+            decoration_shadow: false,
+            backdrop_type: Auto,
+            clip_children: true,
+            border_color: None,
+            title_background_color: None,
+            title_text_color: None,
+            corner_preference: Some(
+                Default,
+            ),
+        },
+    }
+[2026-10-12T10:03:48Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.
+[2026-10-12T10:03:48Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.

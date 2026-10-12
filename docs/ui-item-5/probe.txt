@@ -1,0 +1,8 @@
+   Compiling rulibre-ui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-ui)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.48s
+     Running `target\debug\examples\setup_scan_probe.exe`
+fixture_books=20000 generation_ms=6366
+renderer_screenshot=target/ui-item-5/setup.png scale=1
+mode=first_run books=20000 scan_ms=2418 heartbeat_ticks=150 max_update_gap_ms=24 setup_views=54 scanning_views=168
+mode=saved_config books=20000 scan_ms=2218 heartbeat_ticks=138 max_update_gap_ms=25 setup_views=54 scanning_views=155
+renderer_screenshot=target/ui-item-5/home.png scale=1

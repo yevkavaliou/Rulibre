@@ -1,0 +1,9 @@
+docs/ui-item-6/home-1100.png 1100x700 scale=1
+docs/ui-item-6/home-760.png 760x520 scale=1
+docs/ui-item-6/sidebar-hidden-760.png 760x520 scale=1
+docs/ui-item-6/panes-hidden-760.png 760x520 scale=1
+docs/ui-item-6/search-760.png 760x520 scale=1
+docs/ui-item-6/jobs-760.png 760x520 scale=1
+docs/ui-item-6/settings-760.png 760x520 scale=1
+docs/ui-item-6/setup-760.png 760x520 scale=1
+toggles persisted to isolated ui.toml; no library or reader involved

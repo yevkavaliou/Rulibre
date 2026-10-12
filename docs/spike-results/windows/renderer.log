@@ -1,0 +1,163 @@
+[2026-10-12T10:01:23Z INFO  iced_winit] System theme: None
+[2026-10-12T10:01:23Z INFO  iced_winit] Window attributes for id `Id(
+        1,
+    )`: WindowAttributes {
+        inner_size: Some(
+            Logical(
+                LogicalSize {
+                    width: 1100.0,
+                    height: 700.0,
+                },
+            ),
+        ),
+        min_inner_size: Some(
+            Logical(
+                LogicalSize {
+                    width: 760.0,
+                    height: 520.0,
+                },
+            ),
+        ),
+        max_inner_size: None,
+        position: None,
+        resizable: true,
+        enabled_buttons: WindowButtons(
+            CLOSE | MINIMIZE | MAXIMIZE,
+        ),
+        title: "Rulibre · item 2 capability spike",
+        maximized: false,
+        visible: false,
+        transparent: true,
+        blur: false,
+        decorations: true,
+        window_icon: None,
+        preferred_theme: None,
+        resize_increments: None,
+        content_protected: false,
+        window_level: Normal,
+        active: true,
+        cursor: Icon(
+            Default,
+        ),
+        parent_window: None,
+        fullscreen: None,
+        platform_specific: PlatformSpecificWindowAttributes {
+            owner: None,
+            menu: None,
+            taskbar_icon: None,
+            no_redirection_bitmap: false,
+            drag_and_drop: true,
+            skip_taskbar: false,
+            class_name: "Window Class",
+            decoration_shadow: false,
+            backdrop_type: Auto,
+            clip_children: true,
+            border_color: None,
+            title_background_color: None,
+            title_text_color: None,
+            corner_preference: Some(
+                Default,
+            ),
+        },
+    }
+[2026-10-12T10:01:23Z INFO  iced_wgpu::window::compositor] Settings {
+        present_mode: AutoVsync,
+        backends: Backends(
+            NOOP | VULKAN | GL | METAL | DX12 | BROWSER_WEBGPU,
+        ),
+        default_font: Font {
+            family: SansSerif,
+            weight: Normal,
+            stretch: Normal,
+            style: Normal,
+        },
+        default_text_size: Pixels(
+            16.0,
+        ),
+        antialiasing: Some(
+            MSAAx4,
+        ),
+    }
+[2026-10-12T10:01:24Z INFO  iced_wgpu::window::compositor] Available adapters: [
+        AdapterInfo {
+            name: "NVIDIA GeForce RTX 5060 Ti",
+            vendor: 4318,
+            device: 11524,
+            device_type: DiscreteGpu,
+            driver: "NVIDIA",
+            driver_info: "591.86",
+            backend: Vulkan,
+        },
+        AdapterInfo {
+            name: "AMD Radeon(TM) Graphics",
+            vendor: 4098,
+            device: 5710,
+            device_type: IntegratedGpu,
+            driver: "AMD proprietary driver",
+            driver_info: "25.10.36 (AMD proprietary shader compiler)",
+            backend: Vulkan,
+        },
+        AdapterInfo {
+            name: "NVIDIA GeForce RTX 5060 Ti",
+            vendor: 4318,
+            device: 11524,
+            device_type: DiscreteGpu,
+            driver: "32.0.15.9186",
+            driver_info: "",
+            backend: Dx12,
+        },
+        AdapterInfo {
+            name: "AMD Radeon(TM) Graphics",
+            vendor: 4098,
+            device: 5710,
+            device_type: IntegratedGpu,
+            driver: "32.0.21036.18",
+            driver_info: "",
+            backend: Dx12,
+        },
+        AdapterInfo {
+            name: "Microsoft Basic Render Driver",
+            vendor: 5140,
+            device: 140,
+            device_type: Cpu,
+            driver: "10.0.26100.9278",
+            driver_info: "",
+            backend: Dx12,
+        },
+        AdapterInfo {
+            name: "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2",
+            vendor: 4318,
+            device: 0,
+            device_type: Other,
+            driver: "",
+            driver_info: "4.6.0 NVIDIA 591.86",
+            backend: Gl,
+        },
+    ]
+[2026-10-12T10:01:24Z INFO  iced_wgpu::window::compositor] Selected: AdapterInfo {
+        name: "NVIDIA GeForce RTX 5060 Ti",
+        vendor: 4318,
+        device: 11524,
+        device_type: DiscreteGpu,
+        driver: "NVIDIA",
+        driver_info: "591.86",
+        backend: Vulkan,
+    }
+[2026-10-12T10:01:24Z INFO  iced_wgpu::window::compositor] Available formats: Copied {
+        it: Iter(
+            [
+                Bgra8UnormSrgb,
+                Rgba8UnormSrgb,
+                Bgra8Unorm,
+                Rgba8Unorm,
+                Rgba16Float,
+                Rgb10a2Unorm,
+            ],
+        ),
+    }
+[2026-10-12T10:01:24Z INFO  iced_wgpu::window::compositor] Available alpha modes: [
+        Opaque,
+    ]
+[2026-10-12T10:01:24Z INFO  iced_wgpu::window::compositor] Selected format: Bgra8Unorm with alpha mode: Auto
+[2026-10-12T10:01:24Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.
+[2026-10-12T10:01:24Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.

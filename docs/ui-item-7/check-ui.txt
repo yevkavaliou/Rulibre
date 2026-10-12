@@ -1,0 +1,83 @@
+   Compiling rulibre-ui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-ui)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.96s
+    Checking rulibre-ui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-ui)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.80s
+   Compiling rulibre-ui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-ui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.73s
+     Running unittests src\lib.rs (target\debug\deps\rulibre_ui-d509df72571e445d.exe)
+
+running 40 tests
+test app::tests::folder_picker_result_and_cancel ... ok
+test app::tests::defaults_navigation_and_corrupt_settings_notice ... ok
+test app::tests::saves_are_serialized_and_failed_save_keeps_previous_settings ... ok
+test app::tests::first_run_saved_library_and_config_errors ... ok
+test app::tests::closing_during_scan_stops_services_and_ignores_async_replies ... ok
+test app::tests::metadata_and_cover_guards_reject_a_b_a_and_hidden_results ... ok
+test app::tests::scan_success_warnings_failure_and_cancellation ... ok
+test app::tests::setup_picker_cancel_and_stale_result ... ok
+test app::tests::home_selection_keyboard_focus_and_rescan_identity ... ok
+test app::tests::shell_screen_rules_and_minimum_width ... ok
+test app::tests::setup_validation_and_save_must_succeed_before_scanning ... ok
+test app::tests::shell_toggles_coalesce_and_failed_save_reverts_visible_preferences ... ok
+test app::tests::settings_edits_during_startup_wait_for_load ... ok
+test app::tests::submit_cancel_poll_and_clear_finished ... ok
+test app::tests::switching_libraries_ignores_old_scan_and_startup_responses ... ok
+test catalog::tests::unicode_sort_and_index ... ok
+test catalog::tests::viewport_boundaries ... ok
+test response_guard::tests::rejects_a_b_a_and_hidden_responses ... ok
+test selection::tests::disappearing_anchor_and_hidden_selection ... ok
+test selection::tests::keyboard_ranges_clear_all_boundaries ... ok
+test selection::tests::mouse_modifiers_and_visible_range ... ok
+test services::jobs::tests::cancel_waiting_never_submits_and_running_cancels_handle ... ok
+test services::jobs::tests::completion_order_does_not_assume_submission_order ... ok
+test services::jobs::tests::conflict_waits_then_retries_after_completion ... ok
+test services::jobs::tests::events_use_ui_identity_and_conversion_never_gets_percentage ... ok
+test services::jobs::tests::full_queue_retries_fifo_once_and_preserves_identity ... ok
+test services::jobs::tests::permanent_refusals_finish_instead_of_retrying_forever ... ok
+test services::jobs::tests::send_progress_maps_only_real_copy_bytes ... ok
+test services::jobs::tests::shutdown_cancels_queued_jobs_and_is_idempotent ... ok
+test services::jobs::tests::terminal_event_before_result_keeps_polling_and_survives_clear_finished ... ok
+test settings::tests::corrupt_file_is_reported_and_preserved ... ok
+test services::jobs::tests::real_executor_reports_failure_once_and_shuts_down ... ok
+test settings::tests::new_fields_use_defaults ... ok
+test settings::tests::failed_replacement_cleans_temporary_file ... ok
+test services::jobs::tests::shutdown_joins_before_dropping_running_and_waiting_workspaces ... ok
+test services::tests::real_services_use_background_io_for_settings_and_covers ... ok
+test settings::tests::missing_round_trip_and_replace ... ok
+test catalog::tests::twenty_thousand_catalog_budget ... ok
+test services::tests::library_config_validation_scan_and_read_only_fixture ... ok
+test widgets::book_list::tests::unicode_ellipsis_uses_real_width ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src\main.rs (target\debug\deps\rulibre_ui-3c31c9cf6e44e74e.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples\catalog_probe.rs (target\debug\examples\catalog_probe-dcfcf3f83978634d.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples\setup_scan_probe.rs (target\debug\examples\setup_scan_probe-064476bbebe47fa8.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples\shell_probe.rs (target\debug\examples\shell_probe-30cb3c21e41af308.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples\spike_capabilities.rs (target\debug\examples\spike_capabilities-98f778beaed95a59.exe)
+
+running 1 test
+test tests::click_reads_current_combination_and_focus_loss_clears_it ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

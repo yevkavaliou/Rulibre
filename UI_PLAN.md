@@ -38,6 +38,8 @@ This document plans the new desktop UI built with **iced**. The core crate (`rul
 
 Agreed behaviour:
 
+- **Appearance amendment approved after №13:** Settings includes Text size (14/16/18/20 px, default 16) and Cover size (120/160/200 px wide, default 160). The right-pane divider is draggable (240–480 px, default 300, constrained by the window and center content); its width persists in ui.toml. Convert distinguishes active routes with light text on blue buttons from readable grey no-route entries. See [docs/UI_APPEARANCE.md](docs/UI_APPEARANCE.md). These were not explicitly included in №14–№17 and were implemented as corrections to the existing screens.
+
 - **Three panes plus a fixed bottom bar.** Left sidebar (hideable, fully removed from layout when hidden), centre content, right details pane (hideable via the toggle at the top right). The bottom bar can never be hidden.
 - **Sidebar items:** Home, Search, Library (dropdown containing Formats and Authors dropdowns), Jobs (badge with the number of unfinished jobs), Settings. Home is the default screen and shows all books.
 - **Home / Library filter screens:** list or cover grid (user toggle, grid is default in the mockup). Selecting a Format or Author item shows the same layout filtered, titled "Library · EPUB".
@@ -46,8 +48,8 @@ Agreed behaviour:
 - **Convert** lives in the details pane, not in the bottom bar. Routes that have no tool are shown as "no route".
 - **Bottom bar** shows only the connected reader: none / one / several (then the user must choose). It shows free space, transfer progress with Cancel, and "Send to reader" (or "Send N to reader" for a multi-selection, queued one after another).
 - **Jobs** is a screen: Running, Up next, Done, per-job Cancel, "Clear finished".
-- **Settings** is a screen: window blur, cover tint, prefer KEPUB for Kobo, library folder.
-- **Visual effects (configurable):** OS window blur (Mica/Acrylic/vibrancy) and a blurred cover tint behind the details pane. Per-element backdrop blur (Sonora's GPUI feature) is explicitly **not** planned: iced has no equivalent; flat translucent fills are used instead.
+- **Settings** is a screen: window opacity (slider), blur window (toggle), prefer KEPUB for Kobo, library folder, export folder, text and cover size. See [docs/UI_BLUR.md](docs/UI_BLUR.md).
+- **Visual effects (configurable):** a translucent window (opacity slider) optionally over a blurred desktop (Windows acrylic, "Blur window" toggle), modelled on Sonora. Revised in №14: the №2 "no-go" only applied to wgpu's default surface; see [docs/UI_BLUR.md](docs/UI_BLUR.md). Per-element backdrop blur (Sonora's GPUI feature) is explicitly **not** planned: iced has no equivalent. The cover-colour wash first tried for this item was dropped.
 - Dark theme only in the first version.
 
 ## Decisions taken (recorded so they are not reopened by accident)
@@ -56,19 +58,20 @@ Agreed behaviour:
 |---|---|---|
 | D1 | Use **iced 0.14** (crates.io), not GPUI. | Stable released crate, documented, already named in the original plan. GPUI is an unreleased git dependency with a fork to maintain. |
 | D2 | New crate `crates/rulibre-ui`. The Tauri/Leptos `rulibre-gui` stays until the new UI reaches parity and is removed in №17. The TUI (`rulibre`) stays. | Keeps the repository buildable and gives a fallback during development. |
-| D3 | Native window decorations; the toolbar in the mockup is an in-app row below the OS title bar. | A custom title bar needs drag, resize, snap and DPI handling per OS. Not worth it for v1. |
+| D3 | Native window decorations (revised in №14: Windows with window blur available uses the toolbar as its own title bar); the toolbar in the mockup is an in-app row below the OS title bar. | A custom title bar needs drag, resize, snap and DPI handling per OS. Not worth it for v1. |
 | D4 | UI preferences live in a separate `ui.toml`, not in core `Config`. | The TUI shares core `Config`; adding UI fields there couples the clients. |
 | D5 | A UI-level job coordinator sits in front of `JobExecutor`. | `JobExecutor::submit` rejects with `SubmitError::Full` (bounded capacity) and `SubmitError::Conflict` (two sends to one device, or overlapping destinations). Sending several selected books therefore needs a UI-side queue that submits the next job when the previous finishes. |
 | D6 | Converted files go to a user-configured **export folder** outside the library. | Conversion workspaces are temporary and removed on exit. "Converted" must mean a file the user can find. Needs a Settings row (design gap G3). |
 | D7 | Update logic is a pure `update(state, message)` function. All core calls go through a `Services` trait with a fake for tests. | Makes behaviour testable without a window, a library, or a reader. |
 | D8 | Dark theme only; palette is a token struct so a light theme can be added later. | Matches the agreed design; keeps scope small. |
+| D9 | Window blur ships on Windows through a DirectComposition swap chain (revised in №14; originally "no blur in v1"). Two marked patches to iced live in `vendor/`. Other platforms stay opaque. | The №2 spike only saw wgpu's default `Opaque` surface. Presenting through `DxgiFromVisual` with premultiplied alpha and no redirection bitmap works; see [docs/UI_BLUR.md](docs/UI_BLUR.md). |
 
 ## Design gaps (not in the mockup; resolve before the item that needs them)
 
 | № | Gap | Needed by | Proposal |
 |---|---|---|---|
 | G1 | First-run / library selection screen. | №5 | Centered card: "Choose your Calibre library", path field, Browse button, validation message (uses `config::sanitize_path` and `is_calibre_library`). |
-| G2 | Error and notice display, and scan warnings. | №11 | Toast area bottom-right above the bottom bar; Home header shows "N warnings" which opens a list. |
+| G2 | Error and notice display, and scan warnings. | №11 | Toast area bottom-right above the bottom bar (approved and implemented in №11); Home header shows "N warnings" which opens a list. |
 | G3 | Export folder row in Settings, and the first-convert prompt. | №12 | Settings row "Export folder"; if unset, Convert asks for a folder once. |
 | G4 | "Choose reader…" UI and manual reader path. | №10 | Popover listing detected readers, plus "Select folder manually…" (core already has the manual-selection API). |
 | G5 | Empty library / zero scan results. | №7 | Centered message with "Rescan" and "Change library". |
@@ -79,7 +82,7 @@ Agreed behaviour:
 | Crate | Purpose | Note |
 |---|---|---|
 | `iced` 0.14 | UI toolkit. Features to enable: `image`, `svg`, `tokio`, `advanced`, `lazy`. | Confirm the exact feature set in №1 against 0.14 docs. |
-| `window-vibrancy` 0.8 | Mica/Acrylic/macOS vibrancy. | Only after the №2 spike is positive. |
+| `window-vibrancy` 0.8 | Acrylic backdrop for window blur. | Windows-only normal dependency; dev dependency elsewhere (macOS lab). |
 | `image` | Decode and resize covers, pre-blur the tint. | In the UI crate only; the core stays free of image dependencies. |
 | `rfd` | Native folder picker. | Async API. |
 | `rulibre-core` | All business logic. | Already in the workspace. |
@@ -142,11 +145,15 @@ Output: `docs/UI_SPIKE.md` with the findings and a go/no-go per feature. If wind
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: retained `examples/spike_capabilities.rs` and its README, added dev-only `image` and `window-vibrancy` 0.8.1, embedded Lucide SVG with the original license, and added `scripts/measure-ui-spike.ps1`. Findings, go/no-go decisions, exact measurements and raw evidence are in [docs/UI_SPIKE.md](docs/UI_SPIKE.md).
+- Ran the lab on Windows 11 build 26100 at scale 1 with Vulkan, DX12 and tiny-skia. All Mica/off/Acrylic/off API calls succeeded on the same window. Vulkan and DX12 support only opaque surface composition in the tested configuration, so OS window blur is no-go for v1. Removed its mockup toggle and reduced the planned settings/№14 work to cover tint. This is not a universal claim about every possible iced renderer setup.
+- Inspected renderer screenshots: exact Cyrillic and Polish titles, mixed-script font fallback, 200 synthetic JPEGs and the theme-coloured SVG render. A fixed-width unwrapped title overflows: real width-aware ellipsis remains work for №7. Debug JPEG decode + 200 RGBA handles took 6.74–6.78 s; Vulkan/DX12 redraw interval means were 8.2–8.5 ms; software was 270–280 ms. See the report for memory, p95 and measurement limitations.
+- Checks passed locally: workspace formatting, default workspace locked Clippy (all targets) and tests, and `scripts/check-ui.ps1` including the example's modifier/focus-loss test. CI now includes example tests through the same script. No new commit, PR or remote CI run was created.
+- Remaining limitations: renderer screenshots do not show native desktop blur; physical Ctrl/Shift clicks, Windows 10, macOS, Linux, higher DPI and release performance were not verified. The experiment uses synthetic cover fixtures and no physical reader or Calibre library. Main application behaviour remains the №1 placeholder. No work on №3 was started.
 
 ---
 
@@ -169,11 +176,15 @@ The cover grid and the details pane need a book's cover image. The core does not
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: added public `cover::find_cover` and `CoverFile { path, modified, len }` in `rulibre-core`, with no image dependency or changes to `Book`/`ScanReport`. Discovery matches `cover.jpg` case-insensitively, reads directory entries and metadata only, ignores directories and links resolving outside the canonical book folder, and returns contextual I/O errors. The returned path is canonical. Multiple case variants use deterministic native path order.
+- The scanner currently follows links without checking containment; cover discovery follows the explicit stricter requirement in this item rather than copying that gap. Internal links are accepted; broken links return an error. The contract and the concurrent-path-change limitation are documented in [docs/COVERS.md](docs/COVERS.md).
+- Added seven tests exercised on Windows: present cover with library byte snapshot, absent/directory/unrelated filename, mixed case, 512 MiB metadata-only discovery, injected metadata permission denial, missing book directory, and a file locked against content reads whose metadata remains accessible. Unix additionally has link containment/broken-link and no-read-permission tests; those Unix-specific tests were not run locally.
+- Final local checks passed: `cargo fmt --all -- --check`, `cargo clippy --locked --all-targets -- -D warnings`, `cargo test --locked` (107 passed across the default workspace, 3 ignored; core accounts for 104 passed), `scripts/check-ui.ps1` (locked UI build, all-target Clippy/tests, formatting; one example test passed), `cargo build --locked -p rulibre`, and `cargo build --locked -p rulibre-core --bin scan_metadata`. An initial sandbox run failed because Windows sandbox denied `canonicalize` on temporary fixtures; final checks ran outside that sandbox. An initial Windows test incorrectly expected a content lock to deny metadata access; it was corrected to verify that discovery works without reading contents, then the full checks passed.
+- No commit, PR or remote CI run was created. Tests use synthetic fixtures only; no physical reader or personal Calibre library was verified. №4 has not been started.
 
 ---
 
@@ -189,7 +200,7 @@ The UI will run scans, metadata reads, conversions and transfers in the backgrou
 
 **Services trait.** `services/mod.rs` defines `trait Services` (scan, read metadata, list backends, convert, send, find cover, load/save settings, open folder picker). The real implementation wraps `rulibre-core`; tests use a fake that returns scripted results. No core types leak into view code except the plain data types (`Book`, `Device`, `Metadata`, `JobEvent`).
 
-**Settings.** `settings.rs`: `UiSettings { view: Grid|List, sidebar_visible, window_blur, cover_tint, prefer_kepub, export_folder: Option<PathBuf> }` stored in `ui.toml` next to the core config (`dirs`). Reuse the atomic write used by `config::save_to` (temporary file, `sync_all`, replace). That logic is private (`Config::save_with`), so extract it into a small public generic `config::write_atomic` in the core (with the existing tests moved or kept green) rather than duplicating it in the UI crate. Missing file means defaults; a corrupted file is reported (not silently replaced) and defaults are used for the session.
+**Settings.** `settings.rs`: `UiSettings { view: Grid|List, sidebar_visible, cover_tint, prefer_kepub, export_folder: Option<PathBuf> }` stored in `ui.toml` next to the core config (`dirs`). Reuse the atomic write used by `config::save_to` (temporary file, `sync_all`, replace). That logic is private (`Config::save_with`), so extract it into a small public generic `config::write_atomic` in the core (with the existing tests moved or kept green) rather than duplicating it in the UI crate. Missing file means defaults; a corrupted file is reported (not silently replaced) and defaults are used for the session.
 
 **Job coordinator.** `services/jobs.rs`:
 - Owns one `JobExecutor`. A UI-side FIFO queue holds requests not yet accepted by the executor.
@@ -207,11 +218,17 @@ The UI will run scans, metadata reads, conversions and transfers in the backgrou
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: introduced the UI library boundary, `State`, `Screen`/`Filter`, messages and `update(state, message, services) -> Task<Message>`. The binary injects `RealServices`; views remain the item №1 placeholder and call no core services. No new screen or mockup change was needed. Startup loads UI preferences asynchronously; the shell/setup and library startup remain work for №5–№6.
+- Added `Services` with core-backed scan, metadata, backend discovery, conversion and send requests, background cover lookup and settings IO, and the native asynchronous folder picker (`rfd` 0.17.2). Blocking file operations use Tokio's blocking pool. Test services and executor/handle scripts require no window or reader.
+- Added `UiSettings` in `ui.toml` beside `config.toml`, with Grid/List, sidebar/details visibility, cover tint, Kobo preference and optional export folder. Details visibility is included for the later pane-persistence requirement. Missing files use defaults; corrupt files produce a session notice and remain untouched. Extracted public `config::write_atomic` from the existing writer, retaining temporary-file creation, sync, replacement and cleanup. Saves are serialized/coalesced through update, and a failed save keeps the previously committed settings.
+- Added a FIFO job coordinator owning one core executor, stable UI job IDs independent of core acceptance IDs, Full/Conflict retries, permanent refusal diagnostics, waiting/running cancellation, event/stage/real-copy-progress mapping and exactly-once result collection. Conversion exposes stage only. The 100 ms subscription runs only while unfinished jobs exist. Terminal events arriving before their result keep polling active. Close cancels jobs and joins workers before dropping queued/running/retained conversion workspaces; shutdown is also idempotent on runtime return/drop. `JobRequest` now derives Clone/Debug so refusal cannot consume the retained request.
+- Metadata and cover responses use independent generation + BookId guards, including A → B → A and invalidation when selection/details leave the active screen. Results are data in State for later screens; notices/toasts and the visible Jobs screen are not implemented in this item.
+- Local Windows checks passed: `scripts/check-ui.ps1` (workspace formatting, locked UI build, all-target UI Clippy and tests: 23 library tests plus the existing spike example test), `cargo clippy --locked --all-targets -- -D warnings`, `cargo test --locked` (107 passed in the default workspace, 3 ignored), and `git diff --check`. Tests cover queue capacity/conflict scripts, cancellation, completion ordering, permanent refusal, terminal-event race, progress, shutdown/workspace ordering, stale responses, settings round-trip/corruption/missing file/failed replacement, serialized saves, and actual background settings/cover IO and executor failure on temporary fixtures. Final checks ran outside the Windows sandbox because it denies path canonicalization/network access needed by Cargo and fixtures.
+- No commit, PR or remote CI run was created. Native folder-picker interaction and window-close behaviour were not manually verified; platform checks were local Windows only. No physical reader or personal Calibre library was used. The view remains a placeholder; cover tint has no visual effect yet, and notices are stored for the later error UI. №5 was not started.
 
 ---
 
@@ -234,11 +251,15 @@ Nothing can be shown until a library is chosen and scanned. The old clients had 
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: added G1 Setup and simulated scan states to `docs/design/mockup.html`; the user approved the design before implementation. The production screen is native iced 0.14. Startup asynchronously loads core config, validates the saved library and opens Setup for missing/invalid/corrupted config; corrupt-config errors include its path. Setup has a path field, async native Browse, validation through core `sanitize_path`/`is_calibre_library`, and atomic config save before Home/scanning. IO lives in Services; failed validation/save keeps the prior config/library.
+- Scans run through the existing coordinator. State stores books, warning diagnostics, active scan identity and loading/error/cancelled states. Home and a minimal scan Jobs view show cancellation; failures offer retry or choosing another library. Library changes cancel scans, generation guards reject stale config/picker/validation replies, and active job identity rejects old scan results. Obsolete scans are not retained in generic result history. Shutdown cancels/joins workers. Shell/palette and full Jobs/device/warning UI remain their later items.
+- Checks passed locally on Windows: `scripts/check-ui.ps1` (fmt, locked build, all-target Clippy and tests: 30 UI library tests plus one existing spike test), default-workspace locked all-target Clippy and tests (107 passed, 3 ignored), and `git diff --check`. New tests cover startup/config errors, validation/save failure, warnings, scan failure, cancellation, switching libraries, stale replies and close during scan. RealServices tests exercise real config/scanner/coordinator IO on temporary fixtures and check source contents remain unchanged. Cargo/fixture checks ran outside the Windows sandbox because it blocks path access.
+- Executed `cargo run -p rulibre-ui --example setup_scan_probe --locked` with a real iced window and synthetic 20,000-book library using isolated temporary configuration. Final first-run scan: 2,418 ms, 150 heartbeat events, maximum update gap 24 ms; saved-config scan: 2,218 ms, 138 events, maximum gap 25 ms. Setup and scanning reached the real view; renderer screenshots were inspected and transition title clipping fixed. Report, raw output, screenshots and reproduction instructions: [docs/UI_SETUP.md](docs/UI_SETUP.md).
+- Limitations: the fixture `metadata.db` is only a validation marker, not SQLite. Heartbeats/view calls measure event-loop activity, not GPU frames or physical input latency. Native Browse interaction, higher DPI, minimum-size layout, Linux/macOS and physical-reader/personal-library use were not verified. No commit, PR or remote CI run was created. №6 was not started.
 
 ---
 
@@ -260,11 +281,16 @@ The whole design is one shell: toolbar, sidebar, content area, details pane, bot
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: implemented dark Palette tokens from the mockup, custom iced theme, spacing/radius constants and styles for containers, buttons, text inputs, scrollables and checkboxes. Background/panel stay opaque (D9); overlay alpha values are preserved. The missing mockup error token currently aliases warning. All production UI colour literals are confined to `theme.rs`.
+- Added thirteen embedded, tintable SVG icons and ISC attribution. The app view now uses a shared shell: 34 px toolbar, 148 px sidebar, flexible centre, 226 px details and fixed 46 px bottom bar. Hidden panes are removed from the row. Setup and existing scan/cancel/retry flows are retained; other content remains placeholders. Home/Search/Jobs/Settings navigation is available to inspect the shell; Library facets and list/grid actions remain later items.
+- Sidebar/details toggles update immediately and persist through the existing Services writer. Rapid combined edits coalesce; a failed save restores the last saved preferences and records a notice. Details are dimmed/inactive on Search, Jobs, Settings and Setup. Added tests for these transitions, queued toggles, failed-save rollback and the 386 px centre at minimum width.
+- Executed a real iced shell probe with isolated temporary preferences and RealServices. Captured and inspected 1100×700 and 760×520 at scale 1, hidden-pane states, Search/Jobs/Settings and Setup. Compared shell proportions/colours with the current mockup CSS and its saved browser Settings screenshot; no clipping in the inspected minimum-size shell. Fresh browser rendering of the local HTML was blocked by the browser's file-URL policy. Screenshots, raw probe output, comparison details and reproduction instructions: [docs/UI_SHELL.md](docs/UI_SHELL.md).
+- Checks passed on Windows: `scripts/check-ui.ps1` (fmt, locked build, all-target UI Clippy/tests: 32 library tests plus 1 spike test), default-workspace locked all-target Clippy and tests (all executed tests passed; 3 ignored), and `git diff --check`. Cargo ran outside the Windows filesystem sandbox because path canonicalization is blocked there. No literal colours found outside `theme.rs` in production UI source.
+- Limitations: toggle/navigation messages were driven through production update logic; native mouse clicks, hover tooltips, higher DPI, Linux/macOS and physical readers were not verified. Library/content/details/device actions remain placeholders for later items; save-error toasts remain №11. No commit, PR or remote CI run was created. №7 was not started.
 
 ---
 
@@ -288,11 +314,15 @@ The list is the main screen and the most performance-sensitive one. iced has no 
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: implemented Unicode-lowercase author/title sorting, stable BookId index, standalone selection (plain/Ctrl/Cmd/Shift, keyboard movement/ranges/select-all/clear), modifier tracking and focus-loss reset. Rescans retain existing selected IDs and drop removed IDs; changing libraries clears selection. Home renders a virtual 36 px list with three-row overscan, spacers, responsive columns, format tags, real font-metric ellipsis and a text cache bounded to 2048 entries. Selection opens the details placeholder.
+- Added the item 7 preview to the HTML mockup first; the user explicitly approved empty-library actions, header refresh and warning list in this chat before production implementation. Home now includes those states and list/grid controls. Grid is a placeholder, and list is usable by default until item 9 adds grid/default/persistence. Full metadata/Convert remain item 13.
+- Ran the real iced renderer probe on Windows at scale 1 with 20,000 synthetic books: catalog build 56.875 ms; 209 warm scroll redraw intervals, mean 5.544 ms, p95 10.429 ms, maximum 11.675 ms. These are redraw event intervals, not GPU presentation time or a physical mouse-wheel test. Captured and inspected list at 1100×700 and selected rows/warnings/empty/grid placeholder at 760×520. Details, reproduction, captures and raw output: [docs/UI_CATALOG.md](docs/UI_CATALOG.md).
+- Local checks passed: scripts/check-ui.ps1 (workspace fmt, locked build, all-target UI Clippy/tests: 40 library tests plus 1 spike test), default-workspace locked all-target Clippy and tests (107 passed, 3 ignored), git diff --check. Windows sandbox blocked initial fixture canonicalization/atomic writes; final Cargo checks ran outside it. Initial Clippy findings were fixed before the final pass.
+- Limitations: sorting is Unicode lowercase code-point order, not locale collation. Physical mouse/keyboard input, higher DPI, Linux/macOS and physical readers were not verified. Renderer data is synthetic and preferences isolated. No commit, PR or remote CI run was created. №8 was not started.
 
 ---
 
@@ -315,11 +345,16 @@ Navigation is how the user reaches subsets of the library. The design puts searc
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: added expandable Library/Formats/Authors navigation, counts from scan snapshots (one count per book/format), Unicode-lowercase author grouping, active facet states, filtered Home headings/counts and unfinished coordinator job count. Library is expanded by default; expansion persists for the session only. Facet selection retains stable selected IDs; clicks, Shift ranges and Home keyboard actions use the currently visible order.
+- Search now has an automatically focused input, empty/no-result/loading states, result count and the shared virtual list; it always hides details and ignores Home grid mode. Unicode-lowercase title/author substring matching uses a precomputed immutable index on a background worker. One outstanding worker coalesces intermediate edits; generation checks reject old results/errors across A→B→A, cleared queries, rescans and library changes. Leaving Search preserves query/results. Diacritics remain significant.
+- Executed the native Windows probe with RealServices/coordinator/core scanner on a six-book on-disk fixture; every scanned format and normalized author path returned the expected visible order. Library file bytes stayed unchanged. Inspected native Home at 1100×700 and facet/Search screens at 760×520, including input focus, Cyrillic/Polish queries and restoration after Jobs/Settings. This is a fixture directory scan with a metadata.db marker, not a personal Calibre database or physical reader verification.
+- Native debug search measurement: 20,000 synthetic catalog entries, nine edits at a 30 ms typing interval, asynchronous SearchChanged→SearchFinished mean 11.836 ms, maximum 17.624 ms. This includes scheduling/delivery, not GPU presentation or physical keystroke latency. Captures, raw output, architecture, reproduction and limitations: [docs/UI_NAVIGATION.md](docs/UI_NAVIGATION.md).
+- Passed scripts/check-ui.ps1 (workspace fmt, locked UI build, all-target UI Clippy/tests: 45 library tests plus one spike test), default-workspace locked all-target Clippy and tests (107 passed, 3 ignored), git diff --check. Cargo checks ran outside the Windows filesystem sandbox because it restricts canonicalization and atomic fixture writes.
+- Limitations: no accent folding or locale collation; expanded author sidebar is not virtualized (20,000-book probe used one author); physical mouse/keyboard, higher DPI, Linux/macOS, remote CI and physical readers were not verified. Grid/covers, full Jobs, Settings and metadata/Convert remain their later items. No commit or PR was created. №9 was not started.
 
 ---
 
@@ -343,11 +378,16 @@ The grid view is a required feature. It needs fast, bounded-memory cover loading
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: implemented background cover discovery/decoding, 192×264 thumbnails, atomic disk PNGs under the OS cache directory and keys including library/source path, BookId, mtime, size and pipeline version. Decoder dimensions/allocation are limited. A 300-entry LRU includes missing/failed covers; deterministic title-colour placeholders and once-per-book error logs replace failed images without toasts. Cache-write failure still displays the source thumbnail.
+- Home/facets now default to a responsive virtual grid with fixed-height rows and spacers. Four workers load only visible cards plus one forward viewport. Generation checks ignore stale results; outstanding workers retain slots through scrolling/rescans/library changes. Grid/list choice persists via the existing serialized atomic ui.toml writer; Search remains list-only. Ctrl/Cmd and Shift selection share the list Selection. List thumbnails now use the same cache; it is available for the later details-pane item.
+- Executed separate native Windows cold/warm processes with 5,000 catalog IDs backed by six real JPEG covers read-only. This is a repeated-cover load fixture, not 5,000 different Calibre books or physical reader verification. Final cold traversal: 222.093 s, 280.2 MiB peak working set, 16 ms heartbeat mean 16.003 ms / p95 17.314 ms / max 76.319 ms. Warm: 29.503 s, 281.6 MiB peak, heartbeat mean 15.998 ms / p95 29.701 ms / max 37.816 ms. Both kept at most 300 ready handles/four workers. Warm reused all 5,000 PNGs without timestamp changes. Initial cold diagnostics included screenshot encoding; corrected sampling excludes startup/captures and PNG encoding runs on a worker. These intervals measure scheduled UI-message delivery, not physical input or GPU frame time.
+- Inspected native grid at 1100×700 and list thumbnails at 760×520. Architecture, reproduction, screenshots, raw measurements and limitations: [docs/UI_COVERS.md](docs/UI_COVERS.md). Tests cover metadata/source invalidation, disk reuse/corruption/write failure, oversized/missing/invalid images, LRU, placeholder determinism, grid geometry, fast-scroll/hidden stale replies, worker limits and view saves.
+- Checks passed: scripts/check-ui.ps1 (workspace fmt, locked UI build, all-target Clippy/tests: 51 library tests plus one spike test), default-workspace locked all-target Clippy and tests (107 passed, three ignored), git diff --check. Cargo checks ran outside the Windows filesystem sandbox because it blocks canonicalization, Clippy lookup and atomic fixture writes. No commit, PR or remote CI run was created.
+- Limitations: physical mouse/keyboard, higher DPI, Linux/macOS and 5,000 different source images were not verified. Disk variants are retained; memory alone has an eviction cap. Grid keyboard navigation, larger details images and tint remain their later items. №10 was not started.
 
 ---
 
@@ -361,9 +401,9 @@ The bottom bar is always visible and represents the currently connected reader. 
 
 - Start `DeviceWatcher::start(interval, publish)` at launch; `publish` forwards `DeviceEvent` into the iced runtime through a subscription backed by a channel (`iced::stream::channel`), returning `false` from `publish` when the receiver is gone so the watcher stops itself. Stop the watcher on exit (it joins its thread).
 - Hold the latest snapshot in `State`: devices list, selected id, warnings. Use `DeviceTracker::select` semantics: a single reader is selected automatically, several readers are not.
-- Bar states from the mockup: *none* (grey dot, "No reader connected", hint text instead of a button), *one* (green dot, name, mount point, free space, Send button), *several* (amber dot, "N readers found · choose one", "Choose reader…"). `PollFailed` and detection warnings appear as a small warning text with the diagnostic (full text in the toast area, №11).
+- Bar states from the mockup: *none* (grey dot, "No reader connected", hint/manual-folder action), *one* (green dot, name, mount point, free space, Send button), *several* (amber dot, "N readers found · choose one ▾" in the reader-name position until selected; then the selected name with ▾, mount point, free space and Send). The reader-name dropdown replaces the separate "Choose reader…" button, as requested by the user. `PollFailed` and detection warnings appear as a small warning text with the diagnostic (full text in the toast area, №11).
 - Free space: query available bytes for the mount point. The core does not expose free space today (checked: no such function in `volumes`/`transfer`). Add `volumes::free_space(mount_point) -> Result<u64, Error>` to the core (Win32 `GetDiskFreeSpaceExW`, `statvfs` on Unix) with tests on temporary directories and mock failures. Refresh at each poll; a failure shows "free space unknown", not an error.
-- "Choose reader…" (G4): a popover listing detected readers (name, label, mount point, filesystem, read-only flag) plus "Select folder manually…" which uses the core manual-selection API ([docs/DEVICE_DETECTION.md](docs/DEVICE_DETECTION.md)) with the same validation. Read-only readers are shown but Send is disabled with an explanation.
+- Reader-name dropdown (G4): when several readers are present, clicking the name/▾ opens a list upward from the left side of the bar. Entries show name, label, mount point, filesystem and read-only flag; the active reader has a checkmark. "Select folder manually…" remains in the dropdown and is directly accessible when none/one is detected. It uses the core manual-selection API ([docs/DEVICE_DETECTION.md](docs/DEVICE_DETECTION.md)) with the same validation. Read-only readers are shown but Send is disabled with an explanation.
 - The Send button itself is wired in №11; here it is rendered and enabled/disabled by state.
 - Tests with the fake device feed: connect, disconnect, replace, two readers, selection, poll failure, read-only device, watcher shutdown.
 
@@ -371,11 +411,16 @@ The bottom bar is always visible and represents the currently connected reader. 
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: G4 was revised and signed off by the user. Multiple readers use a dropdown at the reader name with a fixed-size SVG chevron and checked active entry; there is no separate chooser button. The list opens upward on the left. A single reader's name is plain text; manual selection stays accessible through a folder icon or the disconnected bar. The user views the HTML mockup in their own browser; do not start a web server to render it again.
+- Implemented `services/devices.rs`: core DeviceWatcher worker, iced channel subscription, complete snapshots, session selection, detection diagnostics, manual-root revalidation on every poll, and per-poll free-space refresh even when DeviceTracker suppresses unchanged events. The worker uses the core's injectable `start_with` API to include manual readers and space queries. Receiver closure returns false from publish; subscription cancellation and service shutdown stop/join the worker. Poll failure clears selection; recovery with several readers requires a new choice.
+- Added the permanent bar and picker with name/path/free space, selection checkmark, Kobo/Kindle type selector, native Browse, core manual validation, disabled read-only/empty-selection Send and warning tooltips. Manual request generations reject replies after dismissal/exit; feed revisions reject polls started before a new manual choice. Long paths alone are ellipsized so free-space value/unknown status remains visible. Send is only rendered/enabled here; job submission and toast diagnostics remain №11.
+- Added `volumes::free_space(&Path) -> Result<u64, Error>` using GetDiskFreeSpaceExW on Windows and statvfs on Unix, without write probes. Three core tests cover a temporary Unicode directory with unchanged library bytes, invalid paths, injected OS failures and zero/large results. Six new UI tests cover the core-classified folder feed, connect/disconnect/replace/path changes, multiple readers, warnings/failure/recovery, read-only, space refresh/stale paths, manual validation/stale replies, closed receiver and iced-stream cancellation. Shutdown assertions verify join and no subsequent polls.
+- Executed native `devices_probe` on Windows at 760×520 with two on-disk folder fixtures classified from injected core volume snapshots. Captured ten states and inspected dropdown/manual/warning/read-only/unknown-space layouts; chevron and free-space status are visible. This is fixture verification, not a physical or mounted-reader test. Reproduction, captures and limitations: [docs/UI_DEVICES.md](docs/UI_DEVICES.md).
+- Checks passed: default-workspace locked all-target Clippy with warnings denied and locked tests (110 passed, three ignored), scripts/check-ui.ps1 (workspace formatting, locked UI build, all-target Clippy/tests: 57 library tests plus one spike test), and git diff --check. Cargo checks ran outside the Windows filesystem sandbox due to its canonicalization restrictions. No commit, PR or remote CI was created. Linux/macOS execution, higher DPI, physical mouse/keyboard/folder-dialog use and physical readers were not verified. Core names reader kinds (Kobo/Kindle), not individual hardware models. №11 was not started.
 
 ---
 
@@ -400,11 +445,16 @@ This is the first end-to-end user action: send selected books to the reader and 
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: resolved G2 in the HTML reference and received user sign-off before Rust implementation. Added a bottom-right notification stack above the permanent reader bar: success/cancellation notices expire after five seconds, errors stay until closed. The reference now matches the native ✓/! card icons and wrapping stage text. Existing UI notices are also visible and dismissible.
+- Wired Send through Services and the coordinator with one request per selected catalog book, preserving selection chronology and capturing the reader and stored KEPUB preference. Empty selection, absent/read-only reader, Setup/loading and shutdown block sending. Capacity/destination conflicts wait in FIFO order. Progress/queue count and Cancel appear in the bottom bar; a selected reader only shows its own transfers. Preparation shows stage text, copying shows actual bytes/percentage. Jobs now renders Running, Up next and the last 20 completions, per-job Cancel, Clear finished and an empty state; sidebar badge counts unfinished jobs. Core errors are mapped to path-aware conflict/permission/partial-transfer messages; cancellation remains Cancelled.
+- Added per-executor injectable mounted-volume enumeration in core and a matching RealServices constructor. Production still uses OS enumeration, and injected feeds pass the same reader recognition, identity/read-only, destination, copy/publication and cleanup checks. Three real-core UI integration tests cover three sends and destination-byte verification, unchanged complete library snapshots, repeated-send conflicts without overwrite, disappearance after a copy chunk with an actual leftover .part, and cancellation of one waiting and one copying job with cleanup. Five new library tests cover selection/request order/preferences/guards, FIFO cancellation, error categories, progress stages, badges, history and toast expiry.
+- Checks passed locally on Windows: default-workspace locked all-target Clippy with warnings denied and locked tests (110 passed, three ignored); scripts/check-ui.ps1 (workspace formatting, locked UI build, all-target Clippy/tests: 62 library tests, three send integration tests and one spike test); embedded mockup JavaScript syntax compilation; git diff --check. Cargo checks ran outside the Windows filesystem sandbox because it denies workspace canonicalization.
+- Ran native jobs_probe and inspected six 760×520 captures for preparation, copying, Running/Up next, cancellation, success and sticky error. Fixed minimum-width stage wrapping and path-row constraints so the reader name, free-space status and actions remain visible. These are scripted layout states; real fixture transfers were checked separately in tests. Reproduction, screenshots and limitations: [docs/UI_JOBS.md](docs/UI_JOBS.md).
+- No physical or mounted-reader transfer, Linux/macOS execution, higher DPI, physical input or multiple simultaneous destinations were manually verified. Synthetic ebook bytes require no external conversion tool. Core sends report Preparing throughout any preparation conversion, then Copying; no distinct conversion substage is exposed. No commit, PR or remote CI run was created. №12 was not started.
 
 ---
 
@@ -416,22 +466,30 @@ Several later items read user preferences; the screen that edits them must exist
 
 ### How
 
-- Settings screen rows (as in the mockup): Window blur (toggle), Cover tint (toggle), Prefer KEPUB for Kobo (toggle), Library folder (path + Change…), and the new Export folder (path + Change…, G3). Update the mockup with the Export folder row first.
+- Settings screen rows (as in the mockup): Cover tint (toggle), Prefer KEPUB for Kobo (toggle), Library folder (path + Change…), and the new Export folder (path + Change…, G3). Window blur was removed after №2. Update the mockup with the Export folder row first.
 - Changing the library folder reuses the Setup validation, saves the config, clears selection and cover caches for the old library, and starts a scan. A failed validation keeps the old library.
 - Export folder: chosen with the folder picker; must exist, be writable, and be outside the library. The core already enforces this in `converter::validate_output_dir`, which is `pub(crate)`; make it public (or add a thin public wrapper) so the Settings screen shows the same verdict the conversion API will give, instead of re-implementing it. Store in `ui.toml`.
 - Every change is saved immediately through the atomic writer; a failed save shows a toast and keeps the previous value in the file.
-- Window blur and Cover tint toggles are stored now; their effect is implemented in №14. Until then the toggles have no visible effect and the notes must say so.
+- The Cover tint toggle is stored now; its effect is implemented in №14. Until then it has no visible effect and the notes must say so. Window blur is excluded after №2.
 - Tests: each setting round-trips; invalid export folder (inside the library, missing, read-only); library change while a scan is running; failed save keeps the old file.
 
 **Completion criterion:** all settings persist across restarts; changing the library works end to end with a second test library.
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: resolved G3 in the interactive HTML reference and received user sign-off before Rust implementation. Settings now renders Cover tint, Prefer KEPUB for Kobo, Library folder and Export folder, with wrapping paths and native folder pickers. The first-convert folder prompt is designed in the reference; its conversion wiring belongs to №13.
+- Preference edits use the existing serialized/coalesced atomic ui.toml writer. Save failures show a sticky toast and restore the last saved values. Cover tint is stored only and has no visible effect until №14; the stored KEPUB preference already applies to sends. No window blur setting was added.
+- Settings library changes reuse Setup's Calibre validation and atomic config writer with the native path preserved. Cancellation, invalid libraries and failed saves retain the old library and scan. Successful saves clear selection/metadata/catalog and the in-memory cover cache, cancel the old scan, switch to Home and scan the new library; obsolete results are ignored. Existing disk thumbnails remain safe to reuse because keys include the source path.
+- Made converter::validate_output_dir public and added write-access checking shared by Settings and conversion: canonicalization, existing directory, outside the active and other Calibre libraries, not read-only, then an exclusively created empty probe that is removed. The library-protection checks run before any probe write. Export validation is asynchronous and rejects stale replies after a library change.
+- Added update tests for toggle/export coalescing and rollback, cancelled/failed library pickers, invalid library choices during a scan, library switching and obsolete export results. Added core validation coverage (inside-library, missing, file, read-only and other-library destinations, no residual probe, unchanged library snapshot) and a Windows read-only ui.toml replacement test.
+- Added tests/settings_flow.rs, executing real iced task streams, RealServices, config/settings IO and coordinator scans against two temporary fixture libraries. Folder-picker responses are injected; widget focus/scroll effects are skipped. Verified toggles/export persistence across a fresh services/state restart, failed export/library validation, real failed settings replacement on Windows, library switching during an active scan, nonempty selection/cover-cache clearing, the second catalog and unchanged complete snapshots of both libraries. These are test libraries, not personal libraries or physical readers.
+- Checks passed locally on Windows: scripts/check-ui.ps1 (workspace formatting, locked UI build, all-target Clippy with warnings denied and tests: 66 library tests, three send tests, one Settings integration test and one spike test); default-workspace locked all-target Clippy with warnings denied and locked tests (111 passed, three ignored); git diff --check. Cargo checks ran outside the Windows filesystem sandbox after a sandboxed attempt exposed its path-canonicalization access restriction.
+- Ran native settings_probe and visually inspected three 760×520 renderer captures: defaults, saved toggles with a long Unicode export path, and a sticky error. The probe uses isolated config and scripted layout states; native folder-picker interaction is not automated. Reproduction, screenshots and limitations: [docs/UI_SETTINGS.md](docs/UI_SETTINGS.md).
+- No physical reader, personal library, Linux/macOS execution, higher DPI or physical input was verified. Folder access can change after validation and is rechecked by conversion. No commit, PR or remote CI run was created. №13 was not started.
 
 ---
 
@@ -446,7 +504,7 @@ The details pane is the right-hand pane in the design: single-book metadata, a "
 - Visibility: the pane is shown on Home/Library screens when the toggle is on; any selection change forces it open (as designed). The toggle persists in `ui.toml`. The pane is never shown on Search, Jobs, Settings.
 - Single selection: cover (from the №9 cache, larger size), title, then fields Author, Publisher, Year (from `Metadata.date`), Language, Series (+ index), Formats, Rating, identifiers, tags, description. Hide empty fields. Metadata is requested with `JobRequest::Metadata { book }` or a direct `read_metadata` call in a blocking task; key the response with the №4 guard (request generation + `BookId`), so A→B→A does not show stale data. While loading show the title/author from the catalog immediately (the same fallback as `Metadata::with_fallback`), then fill in.
 - Metadata errors: the book still shows with fallback fields; the error appears as a muted line "Metadata could not be read" with the cause available in a tooltip/toast, not a blocking error.
-- Description text: the core already returns it normalised (paragraphs preserved); render with wrapping and a maximum height with scroll.
+- Description text: the core already returns it normalised (paragraphs preserved); render with wrapping and let it scroll with the other metadata in the pane. After user review, the separate description scrollbar/height cap was removed to avoid nested scrolling.
 - Multi-selection: "N selected" counter, first five titles and "+ M more", Convert for all.
 - Convert menu: request backends once at start (`JobRequest::Backends`) and refresh on demand; compute targets with `converter::target_formats(files, backends)` for the selected book(s). For several books show only targets available for **all** of them and list the skipped books. Routes without a tool show "no route" with the reason (missing, broken, no KEPUB support) from `Backend` diagnostics. Never show a target the core would reject.
 - Convert action: for each selected book submit a conversion job (`JobRequest::ConvertFiles` with `library`, `output_dir` = the export folder from №12, `files`, `target`). If no export folder is set, ask once (G3) and store it. Conflicts with an existing output name are reported, never overwritten. Result toast says "Converted · saved to <folder>" with an Open folder action. The converted file is **not** added to the library, and the UI says so only where needed (Jobs row text).
@@ -457,39 +515,58 @@ The details pane is the right-hand pane in the design: single-book metadata, a "
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: implemented the details pane with a larger cached cover, immediate catalog fallback, asynchronous OPF fields, empty-field omission, wrapped/scrollable description and a muted metadata-error line with cause tooltip. Selection-triggered requests use generation + BookId guards; A → B → A and rescan responses cannot replace current metadata. Existing persisted visibility and Home/Library-only layout rules remain in effect.
+- Multi-selection shows the count, first five titles and remaining count. Backend discovery runs at startup and can be refreshed. Convert enables only the intersection of core target_formats for all selected books. Disabled targets expose per-book reasons, including already available formats, missing/broken tools and no KEPUB support.
+- Convert captures the original books/library/target and submits one ConvertFiles job per book through the coordinator. Implemented the approved G3 export dialog: shared asynchronous validation, Cancel/Browse/Use folder, atomic preference persistence before submission. Invalid or cancelled choices, failed saves and library changes do not start the pending batch. Conversion has stage-only progress; completion offers Open folder and Jobs notes that outputs are outside the library. No output is added to the catalog.
+- Real conversion exposed that existing output names were reported as InvalidInput. Changed both existing and racing publication conflicts to ErrorKind::Conflict, retaining no-overwrite behavior, with core fake-runner coverage. The UI now gives the existing-file/not-overwritten diagnostic.
+- Added five update tests for selection metadata/fallback/guards, targets and diagnostics, multi-book job requests, first-export persistence/cancellation/failure and synthetic conversion results/conflicts/Open folder. Added an opt-in real-services integration test using iced task streams, injected folder-picker replies and installed ebook-convert. Ran it successfully with Calibre 8.16.2: synthetic TXT → EPUB (final run 27,085 bytes), ZIP/EPUB MIME checks, export preference persistence, completion action, unchanged complete test-library snapshot; a repeat conversion reported a conflict and preserved both the EPUB and library bytes. This is a temporary test library, not a personal library or physical reader.
+- Checks passed locally on Windows: scripts/check-ui.ps1 (workspace formatting, locked UI build, all-target Clippy with warnings denied, 71 library tests, three send integration tests, one Settings integration test and one spike test; the external-converter test is ignored by default and was run separately); default-workspace locked all-target Clippy with warnings denied and locked tests (111 passed, three ignored); git diff --check. Final example edits were formatted and checked with UI all-target Clippy. Cargo ran outside the Windows filesystem sandbox after path canonicalization was denied inside it.
+- Ran native details_probe and visually inspected five 760×520 captures: cached synthetic cover/single selection, scrolled metadata and description, eight selected books with the Convert menu, muted metadata error/missing converter and the Unicode export dialog. Reproduction, screenshots and limitations: [docs/UI_DETAILS.md](docs/UI_DETAILS.md).
+- Linux/macOS execution, higher DPI, physical input, native folder-picker interaction, Open folder launching, personal libraries and physical readers were not manually verified. Cover tint remains №14. No commit, PR or remote CI run was created. №14 was not started.
+
+- Post-review amendment, 12 October 2026: user approved adjustable text/cover sizes, a draggable persisted details divider and contrasting Convert routes. Updated the mockup first, then implemented the changes on the existing screens. Added two library tests for appearance bounds and drag/coalescing/save rollback, extended real Settings restart coverage and adapted virtualization/ellipsis to the chosen sizes. Final scripts/check-ui.ps1 passed (formatting, locked build, all-target Clippy/tests; shared-tree UI library: 74 passed and one parallel Kindle smoke test ignored). The Settings restart integration, three send integration tests and spike test passed. Default-workspace locked Clippy/tests and git diff --check passed. Fixed a watcher-fixture race exposed during verification; concurrent Kindle production changes were left to the other agent. Renderer captures and limits are in [docs/UI_APPEARANCE.md](docs/UI_APPEARANCE.md). No work on №14 was started.
+
+- Additional user correction, 12 October 2026: removed the separate description scroll container and height cap; the complete wrapped description now scrolls with the metadata through the single content scrollbar. Updated the HTML reference and docs. scripts/check-ui.ps1, default-workspace locked Clippy/tests, mockup JavaScript syntax and git diff --check passed.
 
 ---
 
-## Item №14. Visual effects: window blur and cover tint
+## Item №14. Visual effects: window opacity and blur
 
 ### What and why
 
-The design makes blur configurable. This item turns the Settings toggles into real effects, based on the №2 spike results. Skipping the unproven parts explicitly is better than shipping flickering or broken transparency.
+The design calls for a translucent window over a blurred desktop, as in Sonora. The №2 spike rejected it because wgpu's default Windows surface is opaque. That conclusion was too broad: presenting through a DirectComposition swap chain makes it possible. This item delivers it as Settings controls: an opacity slider and a blur toggle. (An earlier version of this item tinted the details pane with a colour from the cover; the user rejected it. The effect must be transparent, not cover-coloured.)
 
 ### How
 
-- **Window blur** (if №2 is go): create the window as transparent; on Windows 11 apply Mica/Acrylic through `window-vibrancy`, on macOS the vibrancy view; on other systems no effect. When the toggle is off or unsupported, use opaque palette colours. If the spike showed it can only be chosen at window creation, the toggle takes effect on the next start and the Settings row says so.
-- Translucent palette variants: panels and the root use alpha colours only while blur is active, to keep text contrast; check contrast of primary and secondary text on a bright wallpaper and on a dark one.
-- **Cover tint:** for the selected book (single selection only), take its cover, shrink it to a small bitmap, blur it on the CPU once (box or Gaussian blur from `image`), cache the result with the cover cache key, and draw it dimmed behind the details pane content with low opacity. For several books use the accent colour. Compute in a background task; the pane renders without the tint until it is ready.
-- Both effects respect their toggles immediately where possible.
-- Do not implement per-element backdrop blur (decision above).
-- Tests: tint cache key and reuse, tint disabled does no work, palette selection function for blur on/off.
-- Manual check on Windows 11 with a bright and a dark wallpaper; record Windows 10, macOS and Linux as verified or not verified.
+- Windows: select DX12 with `WGPU_DX12_PRESENTATION_SYSTEM=visual` before iced starts, create the window transparent without a redirection bitmap, present with premultiplied alpha. This needs two small patches in `vendor/iced_wgpu` and `vendor/iced_winit` (inactive unless that variable is set); documented in `vendor/README.md`.
+- Settings: **Window opacity** (10–100 %, step 5, default 70; 100 % is opaque) sets the fill alpha live. **Blur window** (toggle, default on) draws a translucent window over a blurred desktop (acrylic via `SetWindowCompositionAttribute`, which, unlike the DWM system backdrop, keeps blurring when the window is unfocused); off gives a translucent window over a sharp desktop. Fills stay opaque until the effect is really in place, and use a darker glass palette while translucent.
+- On Windows with this mode the toolbar is the title bar (own drag, maximise, minimise, close and invisible resize handles); the OS caption was a visibly lighter separate strip.
+- If the platform or OS refuses, stay opaque, show one toast, keep the stored values and disable both controls with an explanation. Other platforms are unchanged.
+- Update the HTML reference (opacity slider and blur toggle over the wallpaper gradient).
+- Do not implement per-element backdrop blur (decision above) or any cover-colour effect.
+- Tests: alpha mapping, apply/clear/refusal state machine, settings defaults/clamp/round-trip.
+- Manual check on Windows 11 over a high-contrast backdrop at several opacities, focused and unfocused; record Windows 10, macOS and Linux as verified or not verified.
 
-**Completion criterion:** toggling the effects works as described in Settings on the developer's Windows machine, with screenshots in the notes.
+**Completion criterion:** moving the slider in Settings changes the window from opaque to a translucent window over a blurred desktop on the developer's Windows machine, and the blur stays when the window loses focus, with screenshots in the notes.
 
 ### Status
 
-not done
+done
 
 ### Post-implementation notes
 
-—
+- 12 October 2026: first implemented a cover-colour wash (details pane, then whole window). The user rejected it: the effect must be transparent, not picked from the cover. That code (cover tint service, tint cache, wash layer, tests, probe) was removed.
+- Investigated the №2 no-go. wgpu 27 supports `Dx12SwapchainKind::DxgiFromVisual` (premultiplied alpha), but iced_wgpu ignores `WGPU_DX12_PRESENTATION_SYSTEM` and prefers straight alpha, which DirectComposition rejects (`Invalid surface`). A first run also produced a flat grey window: a dark 35 % fill over an opaque white redirection surface. Fixed with two marked patches in `vendor/iced_wgpu` and `vendor/iced_winit` (wired via `[patch.crates-io]`, directory excluded from the workspace). Details: [docs/UI_BLUR.md](docs/UI_BLUR.md), [vendor/README.md](vendor/README.md); the spike document carries a pointer.
+- Implemented `blur.rs` (environment setup, alpha mapping, acrylic apply/clear, `BlurState`), `Message::SetWindowOpacity`/`SetWindowBlur`/`BlurApplied`, `sync_blur` after every update, transparent frame clear via `app::style`, translucent root fill and details panel, and the two Settings controls (disabled with a reason when unavailable). The Cover tint toggle and `cover_tint` are replaced by `window_opacity: u8` (default 70) and `window_blur: bool` (default on); an old `cover_tint` key in ui.toml is ignored. `window-vibrancy` and `libloading` are Windows-only normal dependencies; one small `unsafe` block calls `SetWindowCompositionAttribute`.
+- Follow-up the same day, after side-by-side comparison with Sonora, in three rounds. (1) The OS caption was a separate, lighter strip: on Windows with blur available the toolbar is now the title bar (own drag/maximise/minimise/close and invisible resize handles); D3 is revised for that configuration. (2) The window looked grey and milky: the acrylic layer lifts any backdrop (about 52/255 over black), so translucent mode now uses a darker glass palette. (3) Sonora's own control turned out to be an *opacity* slider plus a separate blur toggle, where 15 % means very transparent; I had first modelled a "blur strength" slider and misread dark-desktop measurements, then briefly inverted it. The controls now match Sonora's. Legacy blur-behind (`apply_blur`) was tried and rejected: it does not blur under a DirectComposition visual.
+- **Focus loss:** the first acrylic implementation (`window-vibrancy::apply_acrylic`, which on Windows 11 22H2+ sets the DWM system backdrop) turned solid when the window lost focus. Applying acrylic through `SetWindowCompositionAttribute` keeps the blur. Measured with a scripted focus hand-off over a striped backdrop: system backdrop mean chroma 26 → 70, accent policy 11.6 → 8.8 (the control run confirms the harness sees the difference). Capture: [opacity-15-unfocused](docs/ui-item-14/opacity-15-unfocused.png). The capture script was first written so that it exposed the user's own desktop in a screenshot; that file was deleted immediately (never committed or shared) and the script now keeps a backdrop window on top.
+- Updated the HTML reference (opacity slider, blur toggle, wallpaper gradient behind a translucent app); its JavaScript compiles. Added tests for alpha mapping and the translucency/backdrop state machine plus updated settings tests, `scripts/capture-blur.ps1` and the `blur_probe` example. Real OS-level desktop captures at 15, 40, 70 and 100 % and unfocused at 15 % are in [docs/ui-item-14](docs/ui-item-14/); inspected.
+- Checks passed locally on Windows: scripts/check-ui.ps1 (workspace formatting, locked UI build, all-target Clippy with warnings denied, tests); default-workspace locked all-target Clippy with warnings denied and tests; mockup JavaScript syntax compilation; git diff --check. No commit, PR or remote CI run was created.
+- Not verified: Windows 10; real mouse use of the custom title bar (drag, double-click maximise, buttons, edge resizing: wired to iced window operations and compiled, not exercised with input); Windows 11 snap layouts on the maximise button (lost); flicker while resizing; battery/power behaviour; other GPUs/drivers; 150 %/200 % scaling; macOS (vibrancy not wired) and Linux (opaque). The vendored patches must be re-applied on an iced upgrade. №15 was not started.
 
 ---
 

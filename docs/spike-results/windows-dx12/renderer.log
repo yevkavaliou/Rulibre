@@ -1,0 +1,1836 @@
+[2026-10-12T10:02:41Z INFO  iced_winit] System theme: None
+[2026-10-12T10:02:41Z INFO  iced_winit] Window attributes for id `Id(
+        1,
+    )`: WindowAttributes {
+        inner_size: Some(
+            Logical(
+                LogicalSize {
+                    width: 1100.0,
+                    height: 700.0,
+                },
+            ),
+        ),
+        min_inner_size: Some(
+            Logical(
+                LogicalSize {
+                    width: 760.0,
+                    height: 520.0,
+                },
+            ),
+        ),
+        max_inner_size: None,
+        position: None,
+        resizable: true,
+        enabled_buttons: WindowButtons(
+            CLOSE | MINIMIZE | MAXIMIZE,
+        ),
+        title: "Rulibre · item 2 capability spike",
+        maximized: false,
+        visible: false,
+        transparent: true,
+        blur: false,
+        decorations: true,
+        window_icon: None,
+        preferred_theme: None,
+        resize_increments: None,
+        content_protected: false,
+        window_level: Normal,
+        active: true,
+        cursor: Icon(
+            Default,
+        ),
+        parent_window: None,
+        fullscreen: None,
+        platform_specific: PlatformSpecificWindowAttributes {
+            owner: None,
+            menu: None,
+            taskbar_icon: None,
+            no_redirection_bitmap: false,
+            drag_and_drop: true,
+            skip_taskbar: false,
+            class_name: "Window Class",
+            decoration_shadow: false,
+            backdrop_type: Auto,
+            clip_children: true,
+            border_color: None,
+            title_background_color: None,
+            title_text_color: None,
+            corner_preference: Some(
+                Default,
+            ),
+        },
+    }
+[2026-10-12T10:02:41Z INFO  iced_wgpu::window::compositor] Settings {
+        present_mode: AutoVsync,
+        backends: Backends(
+            DX12,
+        ),
+        default_font: Font {
+            family: SansSerif,
+            weight: Normal,
+            stretch: Normal,
+            style: Normal,
+        },
+        default_text_size: Pixels(
+            16.0,
+        ),
+        antialiasing: Some(
+            MSAAx4,
+        ),
+    }
+[2026-10-12T10:02:41Z INFO  iced_wgpu::window::compositor] Available adapters: [
+        AdapterInfo {
+            name: "NVIDIA GeForce RTX 5060 Ti",
+            vendor: 4318,
+            device: 11524,
+            device_type: DiscreteGpu,
+            driver: "32.0.15.9186",
+            driver_info: "",
+            backend: Dx12,
+        },
+        AdapterInfo {
+            name: "AMD Radeon(TM) Graphics",
+            vendor: 4098,
+            device: 5710,
+            device_type: IntegratedGpu,
+            driver: "32.0.21036.18",
+            driver_info: "",
+            backend: Dx12,
+        },
+        AdapterInfo {
+            name: "Microsoft Basic Render Driver",
+            vendor: 5140,
+            device: 140,
+            device_type: Cpu,
+            driver: "10.0.26100.9278",
+            driver_info: "",
+            backend: Dx12,
+        },
+    ]
+[2026-10-12T10:02:41Z INFO  iced_wgpu::window::compositor] Selected: AdapterInfo {
+        name: "NVIDIA GeForce RTX 5060 Ti",
+        vendor: 4318,
+        device: 11524,
+        device_type: DiscreteGpu,
+        driver: "32.0.15.9186",
+        driver_info: "",
+        backend: Dx12,
+    }
+[2026-10-12T10:02:41Z INFO  iced_wgpu::window::compositor] Available formats: Copied {
+        it: Iter(
+            [
+                Bgra8UnormSrgb,
+                Rgba8UnormSrgb,
+                Bgra8Unorm,
+                Rgba8Unorm,
+                Rgb10a2Unorm,
+                Rgba16Float,
+            ],
+        ),
+    }
+[2026-10-12T10:02:41Z INFO  iced_wgpu::window::compositor] Available alpha modes: [
+        Opaque,
+    ]
+[2026-10-12T10:02:41Z INFO  iced_wgpu::window::compositor] Selected format: Bgra8Unorm with alpha mode: Auto
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "solid_fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct SolidVertexOutput {
+        float4 position : SV_Position;
+        float4 color : LOC0;
+        float4 border_color : LOC1;
+        float2 pos : LOC2;
+        float2 scale : LOC3;
+        float4 border_radius : LOC4;
+        float border_width : LOC5;
+        float4 shadow_color : LOC6;
+        float2 shadow_offset : LOC7;
+        float shadow_blur_radius : LOC8;
+    };
+    
+    struct FragmentInput_solid_fs_main {
+        float4 color : LOC0;
+        float4 border_color : LOC1;
+        float2 pos : LOC2;
+        float2 scale : LOC3;
+        float4 border_radius : LOC4;
+        float border_width : LOC5;
+        float4 shadow_color : LOC6;
+        float2 shadow_offset : LOC7;
+        float shadow_blur_radius : LOC8;
+        float4 position : SV_Position;
+    };
+    
+    float rounded_box_sdf(float2 p, float2 size, float4 corners)
+    {
+        float2 box_half = (float2)0;
+        float corner = (float)0;
+        float2 q = (float2)0;
+    
+        box_half = ((p.x > 0.0) ? corners.xw : corners.yz);
+        float _e11 = box_half.y;
+        float _e13 = box_half.x;
+        corner = ((p.y > 0.0) ? _e13 : _e11);
+        float _e21 = corner;
+        q = ((abs(p) - size) + (_e21).xx);
+        float _e26 = q.x;
+        float _e28 = q.y;
+        float2 _e32 = q;
+        float _e38 = corner;
+        return ((min(max(_e26, _e28), 0.0) + length(max(_e32, (0.0).xx))) - _e38);
+    }
+    
+    float4 solid_fs_main(FragmentInput_solid_fs_main fragmentinput_solid_fs_main) : SV_Target0
+    {
+        SolidVertexOutput input = { fragmentinput_solid_fs_main.position, fragmentinput_solid_fs_main.color, fragmentinput_solid_fs_main.border_color, fragmentinput_solid_fs_main.pos, fragmentinput_solid_fs_main.scale, fragmentinput_solid_fs_main.border_radius, fragmentinput_solid_fs_main.border_width, fragmentinput_solid_fs_main.shadow_color, fragmentinput_solid_fs_main.shadow_offset, fragmentinput_solid_fs_main.shadow_blur_radius };
+        float4 mixed_color = (float4)0;
+        float dist = (float)0;
+        float quad_alpha = (float)0;
+        float shadow_dist = (float)0;
+    
+        mixed_color = input.color;
+        const float _e18 = rounded_box_sdf((-(((input.position.xy - input.pos) - (input.scale * 0.5))) * 2.0), input.scale, (input.border_radius * 2.0));
+        dist = (_e18 / 2.0);
+        if ((input.border_width > 0.0)) {
+            float _e27 = dist;
+            mixed_color = lerp(input.color, input.border_color, clamp(((0.5 + _e27) + input.border_width), 0.0, 1.0));
+        }
+        float _e36 = dist;
+        quad_alpha = clamp((0.5 - _e36), 0.0, 1.0);
+        float4 _e43 = mixed_color;
+        float _e44 = quad_alpha;
+        float4 quad_color = (_e43 * _e44);
+        if ((input.shadow_color.w > 0.0)) {
+            const float _e68 = rounded_box_sdf((-((((input.position.xy - input.pos) - input.shadow_offset) - (input.scale / (2.0).xx))) * 2.0), input.scale, (input.border_radius * 2.0));
+            shadow_dist = (_e68 / 2.0);
+            float _e75 = shadow_dist;
+            float shadow_alpha = (1.0 - smoothstep(-(input.shadow_blur_radius), input.shadow_blur_radius, max(_e75, 0.0)));
+            float _e82 = quad_alpha;
+            return lerp(quad_color, input.shadow_color, ((1.0 - _e82) * shadow_alpha));
+        } else {
+            return quad_color;
+        }
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "solid_vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct Globals {
+        row_major float4x4 transform;
+        float scale;
+        int _end_pad_0;
+        int _end_pad_1;
+        int _end_pad_2;
+    };
+    
+    struct SolidVertexInput {
+        uint vertex_index : SV_VertexID;
+        float4 color : LOC0;
+        float2 pos : LOC1;
+        float2 scale : LOC2;
+        float4 border_color : LOC3;
+        float4 border_radius : LOC4;
+        float border_width : LOC5;
+        float4 shadow_color : LOC6;
+        float2 shadow_offset : LOC7;
+        float shadow_blur_radius : LOC8;
+        nointerpolation uint snap : LOC9;
+    };
+    
+    struct SolidVertexOutput {
+        float4 position : SV_Position;
+        float4 color : LOC0;
+        float4 border_color : LOC1;
+        float2 pos : LOC2;
+        float2 scale : LOC3;
+        float4 border_radius : LOC4;
+        float border_width : LOC5;
+        float4 shadow_color : LOC6;
+        float2 shadow_offset : LOC7;
+        float shadow_blur_radius : LOC8;
+    };
+    
+    cbuffer globals : register(b0) { Globals globals; }
+    
+    struct VertexOutput_solid_vs_main {
+        float4 color_1 : LOC0;
+        float4 border_color : LOC1;
+        float2 pos_1 : LOC2;
+        float2 scale_1 : LOC3;
+        float4 border_radius : LOC4;
+        float border_width : LOC5;
+        float4 shadow_color : LOC6;
+        float2 shadow_offset : LOC7;
+        float shadow_blur_radius : LOC8;
+        float4 position : SV_Position;
+    };
+    
+    float4 premultiply(float4 color)
+    {
+        return float4((color.xyz * color.w), color.w);
+    }
+    
+    uint2 naga_mod(uint2 lhs, uint2 rhs) {
+        return lhs % (rhs == 0u ? 1u : rhs);
+    }
+    
+    float2 vertex_position(uint vertex_index)
+    {
+        return float2((naga_mod((uint2(1u, 2u) + (vertex_index).xx), (6u).xx) < (3u).xx));
+    }
+    
+    VertexOutput_solid_vs_main solid_vs_main(SolidVertexInput input)
+    {
+        SolidVertexOutput out_ = (SolidVertexOutput)0;
+        float2 pos = (float2)0;
+        float2 scale = (float2)0;
+        float2 pos_snap = float2(0.0, 0.0);
+        float2 scale_snap = float2(0.0, 0.0);
+        float4x4 transform = (float4x4)0;
+    
+        float _e14 = globals.scale;
+        pos = (((input.pos + min(input.shadow_offset, float2(0.0, 0.0))) - (input.shadow_blur_radius).xx) * _e14);
+        float _e33 = globals.scale;
+        scale = (((input.scale + float2(abs(input.shadow_offset.x), abs(input.shadow_offset.y))) + ((input.shadow_blur_radius * 2.0)).xx) * _e33);
+        if (bool(input.snap)) {
+            float2 _e46 = pos;
+            float2 _e52 = pos;
+            pos_snap = (round((_e46 + float2(0.001, 0.001))) - _e52);
+            float2 _e54 = pos;
+            float2 _e55 = scale;
+            float2 _e62 = pos;
+            float2 _e64 = pos_snap;
+            float2 _e66 = scale;
+            scale_snap = (((round(((_e54 + _e55) + float2(0.001, 0.001))) - _e62) - _e64) - _e66);
+        }
+        float4 border_radius_1 = min(input.border_radius, ((min(input.scale.x, input.scale.y) / 2.0)).xxxx);
+        float _e79 = scale.x;
+        float _e81 = scale_snap.x;
+        float _e90 = scale.y;
+        float _e92 = scale_snap.y;
+        float2 _e105 = pos;
+        float2 _e106 = pos_snap;
+        transform = float4x4(float4(((_e79 + _e81) + 1.0), 0.0, 0.0, 0.0), float4(0.0, ((_e90 + _e92) + 1.0), 0.0, 0.0), float4(0.0, 0.0, 1.0, 0.0), float4(((_e105 + _e106) - float2(0.5, 0.5)), 0.0, 1.0));
+        float4x4 _e120 = globals.transform;
+        float4x4 _e121 = transform;
+        const float2 _e124 = vertex_position((_NagaConstants.first_vertex + input.vertex_index));
+        out_.position = mul(float4(_e124, 0.0, 1.0), mul(_e121, _e120));
+        const float4 _e131 = premultiply(input.color);
+        out_.color = _e131;
+        const float4 _e134 = premultiply(input.border_color);
+        out_.border_color = _e134;
+        float _e139 = globals.scale;
+        float2 _e141 = pos_snap;
+        out_.pos = ((input.pos * _e139) + _e141);
+        float _e147 = globals.scale;
+        float2 _e149 = scale_snap;
+        out_.scale = ((input.scale * _e147) + _e149);
+        float _e154 = globals.scale;
+        out_.border_radius = (border_radius_1 * _e154);
+        float _e160 = globals.scale;
+        out_.border_width = (input.border_width * _e160);
+        const float4 _e164 = premultiply(input.shadow_color);
+        out_.shadow_color = _e164;
+        float _e169 = globals.scale;
+        out_.shadow_offset = (input.shadow_offset * _e169);
+        float _e175 = globals.scale;
+        out_.shadow_blur_radius = (input.shadow_blur_radius * _e175);
+        SolidVertexOutput _e177 = out_;
+        const SolidVertexOutput solidvertexoutput = _e177;
+        const VertexOutput_solid_vs_main solidvertexoutput_1 = { solidvertexoutput.color, solidvertexoutput.border_color, solidvertexoutput.pos, solidvertexoutput.scale, solidvertexoutput.border_radius, solidvertexoutput.border_width, solidvertexoutput.shadow_color, solidvertexoutput.shadow_offset, solidvertexoutput.shadow_blur_radius, solidvertexoutput.position };
+        return solidvertexoutput_1;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "gradient_fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct GradientVertexOutput {
+        float4 position : SV_Position;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+        float4 position_and_scale : LOC7;
+        float4 border_color : LOC8;
+        float4 border_radius : LOC9;
+        float border_width : LOC10;
+    };
+    
+    struct FragmentInput_gradient_fs_main {
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets_2 : LOC5;
+        float4 direction_1 : LOC6;
+        float4 position_and_scale : LOC7;
+        float4 border_color : LOC8;
+        float4 border_radius : LOC9;
+        float border_width : LOC10;
+        float4 position : SV_Position;
+    };
+    
+    float rounded_box_sdf(float2 p, float2 size, float4 corners)
+    {
+        float2 box_half = (float2)0;
+        float corner = (float)0;
+        float2 q = (float2)0;
+    
+        box_half = ((p.x > 0.0) ? corners.xw : corners.yz);
+        float _e11 = box_half.y;
+        float _e13 = box_half.x;
+        corner = ((p.y > 0.0) ? _e13 : _e11);
+        float _e21 = corner;
+        q = ((abs(p) - size) + (_e21).xx);
+        float _e26 = q.x;
+        float _e28 = q.y;
+        float2 _e32 = q;
+        float _e38 = corner;
+        return ((min(max(_e26, _e28), 0.0) + length(max(_e32, (0.0).xx))) - _e38);
+    }
+    
+    float4 premultiply(float4 color)
+    {
+        return float4((color.xyz * color.w), color.w);
+    }
+    
+    float random(float2 coords)
+    {
+        return frac((sin(dot(coords, float2(12.9898, 78.233))) * 43758.547));
+    }
+    
+    float4 interpolate_color(float4 from, float4 to, float factor)
+    {
+        return lerp(from, to, factor);
+    }
+    
+    float4 gradient(float2 raw_position, float4 direction, float4 colors[8], float offsets_1[8], int last_index_1)
+    {
+        float4 colors_arr[8] = (float4[8])0;
+        float offsets_arr[8] = (float[8])0;
+        float4 color_1 = (float4)0;
+        int i_1 = int(0);
+    
+        float2 start = direction.xy;
+        float2 end = direction.zw;
+        float2 v1_ = (end - start);
+        float2 v2_ = (raw_position - start);
+        float2 unit = normalize(v1_);
+        float coord_offset = (dot(unit, v2_) / length(v1_));
+        colors_arr = colors;
+        offsets_arr = offsets_1;
+        uint2 loop_bound = uint2(4294967295u, 4294967295u);
+        bool loop_init = true;
+        while(true) {
+            if (all(loop_bound == uint2(0u, 0u))) { break; }
+            loop_bound -= uint2(loop_bound.y == 0u, 1u);
+            if (!loop_init) {
+                int _e53 = i_1;
+                i_1 = asint(asuint(_e53) + asuint(int(1)));
+            }
+            loop_init = false;
+            int _e19 = i_1;
+            if ((_e19 < last_index_1)) {
+            } else {
+                break;
+            }
+            {
+                int _e21 = i_1;
+                float curr_offset = offsets_arr[min(uint(_e21), 7u)];
+                int _e24 = i_1;
+                float next_offset = offsets_arr[min(uint(asint(asuint(_e24) + asuint(int(1)))), 7u)];
+                float _e30 = offsets_arr[0];
+                if ((coord_offset <= _e30)) {
+                    float4 _e33 = colors_arr[0];
+                    color_1 = _e33;
+                }
+                if (((curr_offset <= coord_offset) && (coord_offset <= next_offset))) {
+                    int _e37 = i_1;
+                    float4 from_1 = colors_arr[min(uint(_e37), 7u)];
+                    int _e40 = i_1;
+                    float4 to_1 = colors_arr[min(uint(asint(asuint(_e40) + asuint(int(1)))), 7u)];
+                    float factor_1 = smoothstep(curr_offset, next_offset, coord_offset);
+                    const float4 _e46 = interpolate_color(from_1, to_1, factor_1);
+                    color_1 = _e46;
+                }
+                float _e48 = offsets_arr[min(uint(last_index_1), 7u)];
+                if ((coord_offset >= _e48)) {
+                    float4 _e51 = colors_arr[min(uint(last_index_1), 7u)];
+                    color_1 = _e51;
+                }
+            }
+        }
+        float4 _e55 = color_1;
+        const float _e57 = random(raw_position);
+        return (_e55 + (lerp(-(0.0011764705), 0.0011764705, _e57)).xxxx);
+    }
+    
+    float4 unpack_u32_(uint2 data)
+    {
+        uint _e1 = data.x;
+        float2 rg = float2(f16tof32(_e1), f16tof32((_e1) >> 16));
+        uint _e3 = data.y;
+        float2 ba = float2(f16tof32(_e3), f16tof32((_e3) >> 16));
+        return float4(rg.y, rg.x, ba.y, ba.x);
+    }
+    
+    float4 unpack_color(uint2 data_1)
+    {
+        const float4 _e1 = unpack_u32_(data_1);
+        const float4 _e2 = premultiply(_e1);
+        return _e2;
+    }
+    
+    typedef float4 ret_Constructarray8_float4_[8];
+    ret_Constructarray8_float4_ Constructarray8_float4_(float4 arg0, float4 arg1, float4 arg2, float4 arg3, float4 arg4, float4 arg5, float4 arg6, float4 arg7) {
+        float4 ret[8] = { arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 };
+        return ret;
+    }
+    
+    typedef float ret_Constructarray8_float_[8];
+    ret_Constructarray8_float_ Constructarray8_float_(float arg0, float arg1, float arg2, float arg3, float arg4, float arg5, float arg6, float arg7) {
+        float ret[8] = { arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 };
+        return ret;
+    }
+    
+    float4 gradient_fs_main(FragmentInput_gradient_fs_main fragmentinput_gradient_fs_main) : SV_Target0
+    {
+        GradientVertexOutput input = { fragmentinput_gradient_fs_main.position, fragmentinput_gradient_fs_main.colors_1_, fragmentinput_gradient_fs_main.colors_2_, fragmentinput_gradient_fs_main.colors_3_, fragmentinput_gradient_fs_main.colors_4_, fragmentinput_gradient_fs_main.offsets_2, fragmentinput_gradient_fs_main.direction_1, fragmentinput_gradient_fs_main.position_and_scale, fragmentinput_gradient_fs_main.border_color, fragmentinput_gradient_fs_main.border_radius, fragmentinput_gradient_fs_main.border_width };
+        float offsets[8] = (float[8])0;
+        int last_index = int(7);
+        int i = int(0);
+        float4 mixed_color = (float4)0;
+        float dist = (float)0;
+    
+        const float4 _e3 = unpack_color(input.colors_1_.xy);
+        const float4 _e6 = unpack_color(input.colors_1_.zw);
+        const float4 _e9 = unpack_color(input.colors_2_.xy);
+        const float4 _e12 = unpack_color(input.colors_2_.zw);
+        const float4 _e15 = unpack_color(input.colors_3_.xy);
+        const float4 _e18 = unpack_color(input.colors_3_.zw);
+        const float4 _e21 = unpack_color(input.colors_4_.xy);
+        const float4 _e24 = unpack_color(input.colors_4_.zw);
+        float4 colors_1[8] = Constructarray8_float4_(_e3, _e6, _e9, _e12, _e15, _e18, _e21, _e24);
+        const float4 _e28 = unpack_u32_(input.offsets.xy);
+        const float4 _e31 = unpack_u32_(input.offsets.zw);
+        offsets = Constructarray8_float_(_e28.x, _e28.y, _e28.z, _e28.w, _e31.x, _e31.y, _e31.z, _e31.w);
+        uint2 loop_bound_1 = uint2(4294967295u, 4294967295u);
+        bool loop_init_1 = true;
+        while(true) {
+            if (all(loop_bound_1 == uint2(0u, 0u))) { break; }
+            loop_bound_1 -= uint2(loop_bound_1.y == 0u, 1u);
+            if (!loop_init_1) {
+                int _e58 = i;
+                i = asint(asuint(_e58) + asuint(int(1)));
+            }
+            loop_init_1 = false;
+            int _e46 = i;
+            if ((_e46 <= int(7))) {
+            } else {
+                break;
+            }
+            {
+                int _e49 = i;
+                float _e51 = offsets[min(uint(_e49), 7u)];
+                if ((_e51 > 1.0)) {
+                    int _e54 = i;
+                    last_index = asint(asuint(_e54) - asuint(int(1)));
+                    break;
+                }
+            }
+        }
+        float _e63[8] = offsets;
+        int _e64 = last_index;
+        const float4 _e65 = gradient(input.position.xy, input.direction, colors_1, _e63, _e64);
+        mixed_color = _e65;
+        float2 pos = input.position_and_scale.xy;
+        float2 scale = input.position_and_scale.zw;
+        const float _e84 = rounded_box_sdf((-(((input.position.xy - pos) - (scale / (2.0).xx))) * 2.0), scale, (input.border_radius * 2.0));
+        dist = (_e84 / 2.0);
+        if ((input.border_width > 0.0)) {
+            float4 _e91 = mixed_color;
+            float _e93 = dist;
+            mixed_color = lerp(_e91, input.border_color, clamp(((0.5 + _e93) + input.border_width), 0.0, 1.0));
+        }
+        float4 _e102 = mixed_color;
+        float _e103 = dist;
+        return (_e102 * clamp((0.5 - _e103), 0.0, 1.0));
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "gradient_vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct Globals {
+        row_major float4x4 transform;
+        float scale;
+        int _end_pad_0;
+        int _end_pad_1;
+        int _end_pad_2;
+    };
+    
+    struct GradientVertexInput {
+        uint vertex_index : SV_VertexID;
+        nointerpolation uint4 colors_1_ : LOC0;
+        nointerpolation uint4 colors_2_ : LOC1;
+        nointerpolation uint4 colors_3_ : LOC2;
+        nointerpolation uint4 colors_4_ : LOC3;
+        nointerpolation uint4 offsets : LOC4;
+        float4 direction : LOC5;
+        float4 position_and_scale : LOC6;
+        float4 border_color : LOC7;
+        float4 border_radius : LOC8;
+        float border_width : LOC9;
+        nointerpolation uint snap : LOC10;
+    };
+    
+    struct GradientVertexOutput {
+        float4 position : SV_Position;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+        float4 position_and_scale : LOC7;
+        float4 border_color : LOC8;
+        float4 border_radius : LOC9;
+        float border_width : LOC10;
+    };
+    
+    cbuffer globals : register(b0) { Globals globals; }
+    
+    struct VertexOutput_gradient_vs_main {
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+        float4 position_and_scale : LOC7;
+        float4 border_color : LOC8;
+        float4 border_radius_1 : LOC9;
+        float border_width : LOC10;
+        float4 position : SV_Position;
+    };
+    
+    uint2 naga_mod(uint2 lhs, uint2 rhs) {
+        return lhs % (rhs == 0u ? 1u : rhs);
+    }
+    
+    float2 vertex_position(uint vertex_index)
+    {
+        return float2((naga_mod((uint2(1u, 2u) + (vertex_index).xx), (6u).xx) < (3u).xx));
+    }
+    
+    float4 premultiply(float4 color)
+    {
+        return float4((color.xyz * color.w), color.w);
+    }
+    
+    VertexOutput_gradient_vs_main gradient_vs_main(GradientVertexInput input)
+    {
+        GradientVertexOutput out_ = (GradientVertexOutput)0;
+        float2 pos = (float2)0;
+        float2 scale = (float2)0;
+        float2 pos_snap = float2(0.0, 0.0);
+        float2 scale_snap = float2(0.0, 0.0);
+        float min_border_radius = (float)0;
+        float4 border_radius = (float4)0;
+        float4x4 transform = (float4x4)0;
+    
+        float _e6 = globals.scale;
+        pos = (input.position_and_scale.xy * _e6);
+        float _e13 = globals.scale;
+        scale = (input.position_and_scale.zw * _e13);
+        if (bool(input.snap)) {
+            float2 _e26 = pos;
+            float2 _e32 = pos;
+            pos_snap = (round((_e26 + float2(0.001, 0.001))) - _e32);
+            float2 _e34 = pos;
+            float2 _e35 = scale;
+            float2 _e42 = pos;
+            float2 _e44 = pos_snap;
+            float2 _e46 = scale;
+            scale_snap = (((round(((_e34 + _e35) + float2(0.001, 0.001))) - _e42) - _e44) - _e46);
+        }
+        min_border_radius = (min(input.position_and_scale.z, input.position_and_scale.w) * 0.5);
+        float _e58 = min_border_radius;
+        float _e62 = min_border_radius;
+        float _e66 = min_border_radius;
+        float _e70 = min_border_radius;
+        border_radius = float4(min(input.border_radius.x, _e58), min(input.border_radius.y, _e62), min(input.border_radius.z, _e66), min(input.border_radius.w, _e70));
+        float _e75 = scale.x;
+        float _e77 = scale_snap.x;
+        float _e86 = scale.y;
+        float _e88 = scale_snap.y;
+        float2 _e101 = pos;
+        float2 _e102 = pos_snap;
+        transform = float4x4(float4(((_e75 + _e77) + 1.0), 0.0, 0.0, 0.0), float4(0.0, ((_e86 + _e88) + 1.0), 0.0, 0.0), float4(0.0, 0.0, 1.0, 0.0), float4(((_e101 + _e102) - float2(0.5, 0.5)), 0.0, 1.0));
+        float4x4 _e116 = globals.transform;
+        float4x4 _e117 = transform;
+        const float2 _e120 = vertex_position((_NagaConstants.first_vertex + input.vertex_index));
+        out_.position = mul(float4(_e120, 0.0, 1.0), mul(_e117, _e116));
+        out_.colors_1_ = input.colors_1_;
+        out_.colors_2_ = input.colors_2_;
+        out_.colors_3_ = input.colors_3_;
+        out_.colors_4_ = input.colors_4_;
+        out_.offsets = input.offsets;
+        float _e139 = globals.scale;
+        out_.direction = (input.direction * _e139);
+        float2 _e142 = pos;
+        float2 _e143 = pos_snap;
+        float2 _e145 = scale;
+        float2 _e146 = scale_snap;
+        out_.position_and_scale = float4((_e142 + _e143), (_e145 + _e146));
+        const float4 _e151 = premultiply(input.border_color);
+        out_.border_color = _e151;
+        float4 _e153 = border_radius;
+        float _e156 = globals.scale;
+        out_.border_radius = (_e153 * _e156);
+        float _e162 = globals.scale;
+        out_.border_width = (input.border_width * _e162);
+        GradientVertexOutput _e164 = out_;
+        const GradientVertexOutput gradientvertexoutput = _e164;
+        const VertexOutput_gradient_vs_main gradientvertexoutput_1 = { gradientvertexoutput.colors_1_, gradientvertexoutput.colors_2_, gradientvertexoutput.colors_3_, gradientvertexoutput.colors_4_, gradientvertexoutput.offsets, gradientvertexoutput.direction, gradientvertexoutput.position_and_scale, gradientvertexoutput.border_color, gradientvertexoutput.border_radius, gradientvertexoutput.border_width, gradientvertexoutput.position };
+        return gradientvertexoutput_1;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t0, space0);
+    static const SamplerState u_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    Texture2D<float4> u_texture : register(t1);
+    
+    struct FragmentInput_fs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput input = { fragmentinput_fs_main.position, fragmentinput_fs_main.uv };
+        float4 _e4 = u_texture.Sample(u_sampler, input.uv);
+        return _e4;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexInput {
+        uint vertex_index : SV_VertexID;
+    };
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    typedef float2 ret_Constructarray6_float2_[6];
+    ret_Constructarray6_float2_ Constructarray6_float2_(float2 arg0, float2 arg1, float2 arg2, float2 arg3, float2 arg4, float2 arg5) {
+        float2 ret[6] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+        return ret;
+    }
+    
+    static float2 uvs[6] = Constructarray6_float2_(float2(0.0, 0.0), float2(1.0, 0.0), float2(1.0, 1.0), float2(0.0, 0.0), float2(0.0, 1.0), float2(1.0, 1.0));
+    cbuffer u_ratio : register(b0) { float4 u_ratio; }
+    
+    struct VertexOutput_vs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    VertexOutput_vs_main vs_main(VertexInput input)
+    {
+        VertexOutput out_ = (VertexOutput)0;
+    
+        float2 uv_1 = uvs[min(uint((_NagaConstants.first_vertex + input.vertex_index)), 5u)];
+        float4 _e8 = u_ratio;
+        out_.uv = (uv_1 * _e8.xy);
+        out_.position = float4(((uv_1 * float2(2.0, -2.0)) + float2(-1.0, 1.0)), 0.0, 1.0);
+        VertexOutput _e23 = out_;
+        const VertexOutput vertexoutput = _e23;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.uv, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "solid_fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct SolidVertexOutput {
+        float4 position : SV_Position;
+        float4 color : LOC0;
+    };
+    
+    struct FragmentInput_solid_fs_main {
+        float4 color : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 solid_fs_main(FragmentInput_solid_fs_main fragmentinput_solid_fs_main) : SV_Target0
+    {
+        SolidVertexOutput input = { fragmentinput_solid_fs_main.position, fragmentinput_solid_fs_main.color };
+        return input.color;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "solid_vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct Globals {
+        row_major float4x4 transform;
+    };
+    
+    struct SolidVertexInput {
+        float2 position : LOC0;
+        float4 color : LOC1;
+    };
+    
+    struct SolidVertexOutput {
+        float4 position : SV_Position;
+        float4 color : LOC0;
+    };
+    
+    cbuffer globals : register(b0) { Globals globals; }
+    
+    struct VertexOutput_solid_vs_main {
+        float4 color_1 : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 premultiply(float4 color)
+    {
+        return float4((color.xyz * color.w), color.w);
+    }
+    
+    VertexOutput_solid_vs_main solid_vs_main(SolidVertexInput input)
+    {
+        SolidVertexOutput out_ = (SolidVertexOutput)0;
+    
+        const float4 _e4 = premultiply(input.color);
+        out_.color = _e4;
+        float4x4 _e8 = globals.transform;
+        out_.position = mul(float4(input.position, 0.0, 1.0), _e8);
+        SolidVertexOutput _e14 = out_;
+        const SolidVertexOutput solidvertexoutput = _e14;
+        const VertexOutput_solid_vs_main solidvertexoutput_1 = { solidvertexoutput.color, solidvertexoutput.position };
+        return solidvertexoutput_1;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "gradient_fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct GradientVertexOutput {
+        float4 position : SV_Position;
+        float2 raw_position : LOC0;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+    };
+    
+    struct FragmentInput_gradient_fs_main {
+        float2 raw_position_1 : LOC0;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets_2 : LOC5;
+        float4 direction_1 : LOC6;
+        float4 position : SV_Position;
+    };
+    
+    float4 interpolate_color(float4 from, float4 to, float factor)
+    {
+        return lerp(from, to, factor);
+    }
+    
+    float random(float2 coords)
+    {
+        return frac((sin(dot(coords, float2(12.9898, 78.233))) * 43758.547));
+    }
+    
+    float4 gradient(float2 raw_position, float4 direction, float4 colors[8], float offsets_1[8], int last_index_1)
+    {
+        float4 colors_arr[8] = (float4[8])0;
+        float offsets_arr[8] = (float[8])0;
+        float4 color = (float4)0;
+        int i_1 = int(0);
+    
+        float2 start = direction.xy;
+        float2 end = direction.zw;
+        float2 v1_ = (end - start);
+        float2 v2_ = (raw_position - start);
+        float2 unit = normalize(v1_);
+        float coord_offset = (dot(unit, v2_) / length(v1_));
+        colors_arr = colors;
+        offsets_arr = offsets_1;
+        uint2 loop_bound = uint2(4294967295u, 4294967295u);
+        bool loop_init = true;
+        while(true) {
+            if (all(loop_bound == uint2(0u, 0u))) { break; }
+            loop_bound -= uint2(loop_bound.y == 0u, 1u);
+            if (!loop_init) {
+                int _e53 = i_1;
+                i_1 = asint(asuint(_e53) + asuint(int(1)));
+            }
+            loop_init = false;
+            int _e19 = i_1;
+            if ((_e19 < last_index_1)) {
+            } else {
+                break;
+            }
+            {
+                int _e21 = i_1;
+                float curr_offset = offsets_arr[min(uint(_e21), 7u)];
+                int _e24 = i_1;
+                float next_offset = offsets_arr[min(uint(asint(asuint(_e24) + asuint(int(1)))), 7u)];
+                float _e30 = offsets_arr[0];
+                if ((coord_offset <= _e30)) {
+                    float4 _e33 = colors_arr[0];
+                    color = _e33;
+                }
+                if (((curr_offset <= coord_offset) && (coord_offset <= next_offset))) {
+                    int _e37 = i_1;
+                    float4 from_1 = colors_arr[min(uint(_e37), 7u)];
+                    int _e40 = i_1;
+                    float4 to_1 = colors_arr[min(uint(asint(asuint(_e40) + asuint(int(1)))), 7u)];
+                    float factor_1 = smoothstep(curr_offset, next_offset, coord_offset);
+                    const float4 _e46 = interpolate_color(from_1, to_1, factor_1);
+                    color = _e46;
+                }
+                float _e48 = offsets_arr[min(uint(last_index_1), 7u)];
+                if ((coord_offset >= _e48)) {
+                    float4 _e51 = colors_arr[min(uint(last_index_1), 7u)];
+                    color = _e51;
+                }
+            }
+        }
+        float4 _e55 = color;
+        const float _e57 = random(raw_position);
+        return (_e55 + (lerp(-(0.0011764705), 0.0011764705, _e57)).xxxx);
+    }
+    
+    float4 unpack_u32_(uint2 data)
+    {
+        uint _e1 = data.x;
+        float2 rg = float2(f16tof32(_e1), f16tof32((_e1) >> 16));
+        uint _e3 = data.y;
+        float2 ba = float2(f16tof32(_e3), f16tof32((_e3) >> 16));
+        return float4(rg.y, rg.x, ba.y, ba.x);
+    }
+    
+    float4 premultiply(float4 color_1)
+    {
+        return float4((color_1.xyz * color_1.w), color_1.w);
+    }
+    
+    float4 unpack_color(uint2 data_1)
+    {
+        const float4 _e1 = unpack_u32_(data_1);
+        const float4 _e2 = premultiply(_e1);
+        return _e2;
+    }
+    
+    typedef float4 ret_Constructarray8_float4_[8];
+    ret_Constructarray8_float4_ Constructarray8_float4_(float4 arg0, float4 arg1, float4 arg2, float4 arg3, float4 arg4, float4 arg5, float4 arg6, float4 arg7) {
+        float4 ret[8] = { arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 };
+        return ret;
+    }
+    
+    typedef float ret_Constructarray8_float_[8];
+    ret_Constructarray8_float_ Constructarray8_float_(float arg0, float arg1, float arg2, float arg3, float arg4, float arg5, float arg6, float arg7) {
+        float ret[8] = { arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 };
+        return ret;
+    }
+    
+    float4 gradient_fs_main(FragmentInput_gradient_fs_main fragmentinput_gradient_fs_main) : SV_Target0
+    {
+        GradientVertexOutput input = { fragmentinput_gradient_fs_main.position, fragmentinput_gradient_fs_main.raw_position_1, fragmentinput_gradient_fs_main.colors_1_, fragmentinput_gradient_fs_main.colors_2_, fragmentinput_gradient_fs_main.colors_3_, fragmentinput_gradient_fs_main.colors_4_, fragmentinput_gradient_fs_main.offsets_2, fragmentinput_gradient_fs_main.direction_1 };
+        float offsets[8] = (float[8])0;
+        int last_index = int(7);
+        int i = int(0);
+    
+        const float4 _e3 = unpack_color(input.colors_1_.xy);
+        const float4 _e6 = unpack_color(input.colors_1_.zw);
+        const float4 _e9 = unpack_color(input.colors_2_.xy);
+        const float4 _e12 = unpack_color(input.colors_2_.zw);
+        const float4 _e15 = unpack_color(input.colors_3_.xy);
+        const float4 _e18 = unpack_color(input.colors_3_.zw);
+        const float4 _e21 = unpack_color(input.colors_4_.xy);
+        const float4 _e24 = unpack_color(input.colors_4_.zw);
+        float4 colors_1[8] = Constructarray8_float4_(_e3, _e6, _e9, _e12, _e15, _e18, _e21, _e24);
+        const float4 _e28 = unpack_u32_(input.offsets.xy);
+        const float4 _e31 = unpack_u32_(input.offsets.zw);
+        offsets = Constructarray8_float_(_e28.x, _e28.y, _e28.z, _e28.w, _e31.x, _e31.y, _e31.z, _e31.w);
+        uint2 loop_bound_1 = uint2(4294967295u, 4294967295u);
+        bool loop_init_1 = true;
+        while(true) {
+            if (all(loop_bound_1 == uint2(0u, 0u))) { break; }
+            loop_bound_1 -= uint2(loop_bound_1.y == 0u, 1u);
+            if (!loop_init_1) {
+                int _e56 = i;
+                i = asint(asuint(_e56) + asuint(int(1)));
+            }
+            loop_init_1 = false;
+            int _e46 = i;
+            if ((_e46 <= int(7))) {
+            } else {
+                break;
+            }
+            {
+                int _e49 = i;
+                float _e51 = offsets[min(uint(_e49), 7u)];
+                if ((_e51 >= 1.0)) {
+                    int _e54 = i;
+                    last_index = _e54;
+                    break;
+                }
+            }
+        }
+        float _e60[8] = offsets;
+        int _e61 = last_index;
+        const float4 _e62 = gradient(input.raw_position, input.direction, colors_1, _e60, _e61);
+        return _e62;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "gradient_vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct Globals {
+        row_major float4x4 transform;
+    };
+    
+    struct GradientVertexInput {
+        float2 v_pos : LOC0;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+    };
+    
+    struct GradientVertexOutput {
+        float4 position : SV_Position;
+        float2 raw_position : LOC0;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+    };
+    
+    cbuffer globals : register(b0) { Globals globals; }
+    
+    struct VertexOutput_gradient_vs_main {
+        float2 raw_position : LOC0;
+        nointerpolation uint4 colors_1_ : LOC1;
+        nointerpolation uint4 colors_2_ : LOC2;
+        nointerpolation uint4 colors_3_ : LOC3;
+        nointerpolation uint4 colors_4_ : LOC4;
+        nointerpolation uint4 offsets : LOC5;
+        float4 direction : LOC6;
+        float4 position : SV_Position;
+    };
+    
+    VertexOutput_gradient_vs_main gradient_vs_main(GradientVertexInput input)
+    {
+        GradientVertexOutput output = (GradientVertexOutput)0;
+    
+        float4x4 _e5 = globals.transform;
+        output.position = mul(float4(input.v_pos, 0.0, 1.0), _e5);
+        output.raw_position = input.v_pos;
+        output.colors_1_ = input.colors_1_;
+        output.colors_2_ = input.colors_2_;
+        output.colors_3_ = input.colors_3_;
+        output.colors_4_ = input.colors_4_;
+        output.offsets = input.offsets;
+        output.direction = input.direction;
+        GradientVertexOutput _e25 = output;
+        const GradientVertexOutput gradientvertexoutput = _e25;
+        const VertexOutput_gradient_vs_main gradientvertexoutput_1 = { gradientvertexoutput.raw_position, gradientvertexoutput.colors_1_, gradientvertexoutput.colors_2_, gradientvertexoutput.colors_3_, gradientvertexoutput.colors_4_, gradientvertexoutput.offsets, gradientvertexoutput.direction, gradientvertexoutput.position };
+        return gradientvertexoutput_1;
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        nointerpolation float4 clip_bounds : LOC0;
+        nointerpolation float4 border_radius : LOC1;
+        nointerpolation float4 atlas : LOC2;
+        nointerpolation int layer : LOC3;
+        nointerpolation float opacity : LOC4;
+        float2 uv : LOC5;
+    };
+    
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t0, space0);
+    static const SamplerState u_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    Texture2DArray<float4> u_texture : register(t1);
+    
+    struct FragmentInput_fs_main {
+        nointerpolation float4 clip_bounds : LOC0;
+        nointerpolation float4 border_radius : LOC1;
+        nointerpolation float4 atlas : LOC2;
+        nointerpolation int layer : LOC3;
+        nointerpolation float opacity : LOC4;
+        float2 uv : LOC5;
+        float4 position : SV_Position;
+    };
+    
+    float rounded_box_sdf(float2 p, float2 size, float4 corners)
+    {
+        float2 box_half = (float2)0;
+        float corner = (float)0;
+        float2 q = (float2)0;
+    
+        box_half = ((p.x > 0.0) ? corners.xw : corners.yz);
+        float _e11 = box_half.y;
+        float _e13 = box_half.x;
+        corner = ((p.y > 0.0) ? _e13 : _e11);
+        float _e21 = corner;
+        q = ((abs(p) - size) + (_e21).xx);
+        float _e26 = q.x;
+        float _e28 = q.y;
+        float2 _e32 = q;
+        float _e38 = corner;
+        return ((min(max(_e26, _e28), 0.0) + length(max(_e32, (0.0).xx))) - _e38);
+    }
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput input = { fragmentinput_fs_main.position, fragmentinput_fs_main.clip_bounds, fragmentinput_fs_main.border_radius, fragmentinput_fs_main.atlas, fragmentinput_fs_main.layer, fragmentinput_fs_main.opacity, fragmentinput_fs_main.uv };
+        float2 fragment = input.position.xy;
+        float2 position_1 = input.clip_bounds.xy;
+        float2 scale = input.clip_bounds.zw;
+        const float _e17 = rounded_box_sdf((2.0 * ((fragment - position_1) - (scale / (2.0).xx))), scale, (input.border_radius * 2.0));
+        float d = (_e17 / 2.0);
+        float antialias = clamp((1.0 - d), 0.0, 1.0);
+        bool inside = (all((input.uv >= input.atlas.xy)) && all((input.uv <= input.atlas.zw)));
+        float4 _e40 = u_texture.Sample(u_sampler, float3(input.uv, input.layer));
+        return (_e40 * float4(1.0, 1.0, 1.0, ((antialias * input.opacity) * float(inside))));
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct Globals {
+        row_major float4x4 transform;
+        float scale_factor;
+        int _end_pad_0;
+        int _end_pad_1;
+        int _end_pad_2;
+    };
+    
+    struct VertexInput {
+        uint vertex_index : SV_VertexID;
+        float2 center_ : LOC0;
+        float4 clip_bounds : LOC1;
+        float4 border_radius : LOC2;
+        float4 tile : LOC3;
+        float rotation : LOC4;
+        float opacity : LOC5;
+        float2 atlas_pos : LOC6;
+        float2 atlas_scale : LOC7;
+        nointerpolation int layer : LOC8;
+        nointerpolation uint snap : LOC9;
+    };
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        nointerpolation float4 clip_bounds : LOC0;
+        nointerpolation float4 border_radius : LOC1;
+        nointerpolation float4 atlas : LOC2;
+        nointerpolation int layer : LOC3;
+        nointerpolation float opacity : LOC4;
+        float2 uv : LOC5;
+    };
+    
+    cbuffer globals : register(b0) { Globals globals; }
+    
+    struct VertexOutput_vs_main {
+        nointerpolation float4 clip_bounds : LOC0;
+        nointerpolation float4 border_radius : LOC1;
+        nointerpolation float4 atlas : LOC2;
+        nointerpolation int layer : LOC3;
+        nointerpolation float opacity : LOC4;
+        float2 uv : LOC5;
+        float4 position : SV_Position;
+    };
+    
+    uint2 naga_mod(uint2 lhs, uint2 rhs) {
+        return lhs % (rhs == 0u ? 1u : rhs);
+    }
+    
+    float2 vertex_position(uint vertex_index)
+    {
+        return float2((naga_mod((uint2(1u, 2u) + (vertex_index).xx), (6u).xx) < (3u).xx));
+    }
+    
+    typedef float2 ret_Constructarray4_float2_[4];
+    ret_Constructarray4_float2_ Constructarray4_float2_(float2 arg0, float2 arg1, float2 arg2, float2 arg3) {
+        float2 ret[4] = { arg0, arg1, arg2, arg3 };
+        return ret;
+    }
+    
+    typedef float2 ret_ZeroValuearray4_float2_[4];
+    ret_ZeroValuearray4_float2_ ZeroValuearray4_float2_() {
+        return (float2[4])0;
+    }
+    
+    VertexOutput_vs_main vs_main(VertexInput input)
+    {
+        VertexOutput out_ = (VertexOutput)0;
+        float2 rotated[4] = ZeroValuearray4_float2_();
+        uint i = 0u;
+        float2 min_xy = (float2)0;
+        float2 max_xy = (float2)0;
+        uint i_1 = 1u;
+    
+        const float2 _e3 = vertex_position((_NagaConstants.first_vertex + input.vertex_index));
+        float4 tile = input.tile;
+        float2 center_ = input.center_;
+        float2 corners[4] = Constructarray4_float2_(tile.xy, (tile.xy + float2(tile.z, 0.0)), (tile.xy + float2(0.0, tile.w)), (tile.xy + tile.zw));
+        float cos_r = cos(-(input.rotation));
+        float sin_r = sin(-(input.rotation));
+        uint2 loop_bound = uint2(4294967295u, 4294967295u);
+        bool loop_init = true;
+        while(true) {
+            if (all(loop_bound == uint2(0u, 0u))) { break; }
+            loop_bound -= uint2(loop_bound.y == 0u, 1u);
+            if (!loop_init) {
+                uint _e54 = i;
+                i = (_e54 + 1u);
+            }
+            loop_init = false;
+            uint _e31 = i;
+            if ((_e31 < 4u)) {
+            } else {
+                break;
+            }
+            {
+                uint _e34 = i;
+                float2 c = (corners[min(uint(_e34), 3u)] - input.center_);
+                uint _e38 = i;
+                rotated[min(uint(_e38), 3u)] = (float2(((c.x * cos_r) - (c.y * sin_r)), ((c.x * sin_r) + (c.y * cos_r))) + input.center_);
+            }
+        }
+        float2 _e57 = rotated[0];
+        min_xy = _e57;
+        float2 _e60 = rotated[0];
+        max_xy = _e60;
+        uint2 loop_bound_1 = uint2(4294967295u, 4294967295u);
+        bool loop_init_1 = true;
+        while(true) {
+            if (all(loop_bound_1 == uint2(0u, 0u))) { break; }
+            loop_bound_1 -= uint2(loop_bound_1.y == 0u, 1u);
+            if (!loop_init_1) {
+                uint _e78 = i_1;
+                i_1 = (_e78 + 1u);
+            }
+            loop_init_1 = false;
+            uint _e64 = i_1;
+            if ((_e64 < 4u)) {
+            } else {
+                break;
+            }
+            {
+                float2 _e67 = min_xy;
+                uint _e68 = i_1;
+                float2 _e70 = rotated[min(uint(_e68), 3u)];
+                min_xy = min(_e67, _e70);
+                float2 _e72 = max_xy;
+                uint _e73 = i_1;
+                float2 _e75 = rotated[min(uint(_e73), 3u)];
+                max_xy = max(_e72, _e75);
+            }
+        }
+        float2 _e80 = min_xy;
+        float2 _e81 = max_xy;
+        float2 _e82 = min_xy;
+        float4 rotated_bounds = float4(_e80, (_e81 - _e82));
+        float2 clip_min = max(rotated_bounds.xy, input.clip_bounds.xy);
+        float2 clip_max = min((rotated_bounds.xy + rotated_bounds.zw), (input.clip_bounds.xy + input.clip_bounds.zw));
+        float4 clipped_tile = float4(clip_min, max((0.0).xx, (clip_max - clip_min)));
+        float2 v_pos = (clipped_tile.xy + (_e3 * clipped_tile.zw));
+        float _e110 = globals.scale_factor;
+        out_.position = (float4((_e110).xx, 1.0, 1.0) * float4(v_pos, 0.0, 1.0));
+        float _e122 = globals.scale_factor;
+        out_.clip_bounds = (_e122 * input.clip_bounds);
+        float2 uv_1 = (input.atlas_pos + (((v_pos - tile.xy) / tile.zw) * input.atlas_scale));
+        float2 uv_center = (input.atlas_pos + (input.atlas_scale / (2.0).xx));
+        float2 d = (uv_1 - uv_center);
+        out_.uv = (float2(((d.x * cos_r) - (d.y * sin_r)), ((d.x * sin_r) + (d.y * cos_r))) + uv_center);
+        if (bool(input.snap)) {
+            float4 _e157 = out_.position;
+            out_.position = round(_e157);
+            float4 _e161 = out_.clip_bounds;
+            float4 _e165 = out_.clip_bounds;
+            float4 _e168 = out_.clip_bounds;
+            float4 _e173 = out_.clip_bounds;
+            out_.clip_bounds = float4(round(_e161.xy), (round((_e165.xy + _e168.zw)) - _e173.xy));
+        }
+        float4x4 _e180 = globals.transform;
+        float4 _e182 = out_.position;
+        out_.position = mul(_e182, _e180);
+        float _e187 = globals.scale_factor;
+        out_.border_radius = (_e187 * min(input.border_radius, ((min(input.clip_bounds.z, input.clip_bounds.w) / 2.0)).xxxx));
+        out_.atlas = float4(input.atlas_pos, (input.atlas_pos + input.atlas_scale));
+        out_.layer = input.layer;
+        out_.opacity = input.opacity;
+        VertexOutput _e209 = out_;
+        const VertexOutput vertexoutput = _e209;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.clip_bounds, vertexoutput.border_radius, vertexoutput.atlas, vertexoutput.layer, vertexoutput.opacity, vertexoutput.uv, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    
+[2026-10-12T10:02:41Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.
+[2026-10-12T10:02:41Z WARN  fontdb] Failed to load a font face 0 from 'C:\WINDOWS\Fonts\mstmc.ttf' cause malformed font.
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        precise float4 position : SV_Position;
+        float4 color : LOC0;
+        float2 uv : LOC1;
+        nointerpolation uint content_type : LOC2;
+    };
+    
+    Texture2D<float4> color_atlas_texture : register(t0);
+    Texture2D<float4> mask_atlas_texture : register(t1);
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t2, space0);
+    static const SamplerState atlas_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    
+    struct FragmentInput_fs_main {
+        float4 color : LOC0;
+        float2 uv : LOC1;
+        nointerpolation uint content_type : LOC2;
+        precise float4 position : SV_Position;
+    };
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput in_frag = { fragmentinput_fs_main.position, fragmentinput_fs_main.color, fragmentinput_fs_main.uv, fragmentinput_fs_main.content_type };
+        switch(in_frag.content_type) {
+            case 0u: {
+                float4 _e6 = color_atlas_texture.SampleLevel(atlas_sampler, in_frag.uv, 0.0);
+                return _e6;
+            }
+            case 1u: {
+                float4 _e15 = mask_atlas_texture.SampleLevel(atlas_sampler, in_frag.uv, 0.0);
+                return float4(in_frag.color.xyz, (in_frag.color.w * _e15.x));
+            }
+            default: {
+                return (0.0).xxxx;
+            }
+        }
+    }
+    
+[2026-10-12T10:02:41Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexInput {
+        uint vertex_idx : SV_VertexID;
+        nointerpolation int2 pos : LOC0;
+        nointerpolation uint dim : LOC1;
+        nointerpolation uint uv : LOC2;
+        nointerpolation uint color : LOC3;
+        nointerpolation uint content_type_with_srgb : LOC4;
+        float depth : LOC5;
+    };
+    
+    struct VertexOutput {
+        precise float4 position : SV_Position;
+        float4 color : LOC0;
+        float2 uv : LOC1;
+        nointerpolation uint content_type : LOC2;
+    };
+    
+    struct Params {
+        uint2 screen_resolution;
+        uint2 _pad;
+    };
+    
+    Texture2D<float4> color_atlas_texture : register(t0);
+    Texture2D<float4> mask_atlas_texture : register(t1);
+    cbuffer params : register(b0) { Params params; }
+    
+    struct VertexOutput_vs_main {
+        float4 color : LOC0;
+        float2 uv_1 : LOC1;
+        nointerpolation uint content_type : LOC2;
+        precise float4 position : SV_Position;
+    };
+    
+    float srgb_to_linear(float c)
+    {
+        if ((c <= 0.04045)) {
+            return (c / 12.92);
+        } else {
+            return pow(((c + 0.055) / 1.055), 2.4);
+        }
+    }
+    
+    uint2 NagaDimensions2D(Texture2D<float4> tex)
+    {
+        uint4 ret;
+        tex.GetDimensions(0, ret.x, ret.y, ret.z);
+        return ret.xy;
+    }
+    
+    VertexOutput_vs_main vs_main(VertexInput in_vert)
+    {
+        int2 pos = (int2)0;
+        uint2 uv = (uint2)0;
+        VertexOutput vert_output = (VertexOutput)0;
+        uint2 dim = (0u).xx;
+    
+        pos = in_vert.pos;
+        uint width = (in_vert.dim & 65535u);
+        uint height = ((in_vert.dim & 4294901760u) >> 16u);
+        uint color_1 = in_vert.color;
+        uv = uint2((in_vert.uv & 65535u), ((in_vert.uv & 4294901760u) >> 16u));
+        uint v = (_NagaConstants.first_vertex + in_vert.vertex_idx);
+        uint2 corner_position = uint2(((_NagaConstants.first_vertex + in_vert.vertex_idx) & 1u), (((_NagaConstants.first_vertex + in_vert.vertex_idx) >> 1u) & 1u));
+        uint2 corner_offset = (uint2(width, height) * corner_position);
+        uint2 _e34 = uv;
+        uv = (_e34 + corner_offset);
+        int2 _e36 = pos;
+        pos = asint(asuint(_e36) + asuint(int2(corner_offset)));
+        int2 _e41 = pos;
+        uint2 _e47 = params.screen_resolution;
+        vert_output.position = float4((((2.0 * float2(_e41)) / float2(_e47)) - (1.0).xx), in_vert.depth, 1.0);
+        float _e59 = vert_output.position.y;
+        vert_output.position.y = (_e59 * -1.0);
+        uint content_type_1 = (in_vert.content_type_with_srgb & 65535u);
+        uint srgb = ((in_vert.content_type_with_srgb & 4294901760u) >> 16u);
+        switch(srgb) {
+            case 0u: {
+                vert_output.color = float4((float(((color_1 & 16711680u) >> 16u)) / 255.0), (float(((color_1 & 65280u) >> 8u)) / 255.0), (float((color_1 & 255u)) / 255.0), (float(((color_1 & 4278190080u) >> 24u)) / 255.0));
+                break;
+            }
+            case 1u: {
+                const float _e105 = srgb_to_linear((float(((color_1 & 16711680u) >> 16u)) / 255.0));
+                const float _e113 = srgb_to_linear((float(((color_1 & 65280u) >> 8u)) / 255.0));
+                const float _e119 = srgb_to_linear((float((color_1 & 255u)) / 255.0));
+                vert_output.color = float4(_e105, _e113, _e119, (float(((color_1 & 4278190080u) >> 24u)) / 255.0));
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        switch(content_type_1) {
+            case 0u: {
+                dim = NagaDimensions2D(color_atlas_texture);
+                break;
+            }
+            case 1u: {
+                dim = NagaDimensions2D(mask_atlas_texture);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        vert_output.content_type = content_type_1;
+        uint2 _e137 = uv;
+        uint2 _e139 = dim;
+        vert_output.uv = (float2(_e137) / float2(_e139));
+        VertexOutput _e142 = vert_output;
+        const VertexOutput vertexoutput = _e142;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.color, vertexoutput.uv, vertexoutput.content_type, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    
+[2026-10-12T10:02:42Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t0, space0);
+    static const SamplerState u_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    Texture2D<float4> u_texture : register(t1);
+    
+    struct FragmentInput_fs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput input = { fragmentinput_fs_main.position, fragmentinput_fs_main.uv };
+        float4 _e4 = u_texture.Sample(u_sampler, input.uv);
+        return _e4;
+    }
+    
+[2026-10-12T10:02:42Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexInput {
+        uint vertex_index : SV_VertexID;
+    };
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    typedef float2 ret_Constructarray6_float2_[6];
+    ret_Constructarray6_float2_ Constructarray6_float2_(float2 arg0, float2 arg1, float2 arg2, float2 arg3, float2 arg4, float2 arg5) {
+        float2 ret[6] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+        return ret;
+    }
+    
+    static float2 uvs[6] = Constructarray6_float2_(float2(0.0, 0.0), float2(1.0, 0.0), float2(1.0, 1.0), float2(0.0, 0.0), float2(0.0, 1.0), float2(1.0, 1.0));
+    cbuffer u_ratio : register(b0) { float4 u_ratio; }
+    
+    struct VertexOutput_vs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    VertexOutput_vs_main vs_main(VertexInput input)
+    {
+        VertexOutput out_ = (VertexOutput)0;
+    
+        float2 uv_1 = uvs[min(uint((_NagaConstants.first_vertex + input.vertex_index)), 5u)];
+        float4 _e8 = u_ratio;
+        out_.uv = (uv_1 * _e8.xy);
+        out_.position = float4(((uv_1 * float2(2.0, -2.0)) + float2(-1.0, 1.0)), 0.0, 1.0);
+        VertexOutput _e23 = out_;
+        const VertexOutput vertexoutput = _e23;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.uv, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    
+[2026-10-12T10:02:43Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t0, space0);
+    static const SamplerState u_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    Texture2D<float4> u_texture : register(t1);
+    
+    struct FragmentInput_fs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput input = { fragmentinput_fs_main.position, fragmentinput_fs_main.uv };
+        float4 _e4 = u_texture.Sample(u_sampler, input.uv);
+        return _e4;
+    }
+    
+[2026-10-12T10:02:43Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexInput {
+        uint vertex_index : SV_VertexID;
+    };
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    typedef float2 ret_Constructarray6_float2_[6];
+    ret_Constructarray6_float2_ Constructarray6_float2_(float2 arg0, float2 arg1, float2 arg2, float2 arg3, float2 arg4, float2 arg5) {
+        float2 ret[6] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+        return ret;
+    }
+    
+    static float2 uvs[6] = Constructarray6_float2_(float2(0.0, 0.0), float2(1.0, 0.0), float2(1.0, 1.0), float2(0.0, 0.0), float2(0.0, 1.0), float2(1.0, 1.0));
+    cbuffer u_ratio : register(b0) { float4 u_ratio; }
+    
+    struct VertexOutput_vs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    VertexOutput_vs_main vs_main(VertexInput input)
+    {
+        VertexOutput out_ = (VertexOutput)0;
+    
+        float2 uv_1 = uvs[min(uint((_NagaConstants.first_vertex + input.vertex_index)), 5u)];
+        float4 _e8 = u_ratio;
+        out_.uv = (uv_1 * _e8.xy);
+        out_.position = float4(((uv_1 * float2(2.0, -2.0)) + float2(-1.0, 1.0)), 0.0, 1.0);
+        VertexOutput _e23 = out_;
+        const VertexOutput vertexoutput = _e23;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.uv, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    
+[2026-10-12T10:02:44Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t0, space0);
+    static const SamplerState u_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    Texture2D<float4> u_texture : register(t1);
+    
+    struct FragmentInput_fs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput input = { fragmentinput_fs_main.position, fragmentinput_fs_main.uv };
+        float4 _e4 = u_texture.Sample(u_sampler, input.uv);
+        return _e4;
+    }
+    
+[2026-10-12T10:02:44Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexInput {
+        uint vertex_index : SV_VertexID;
+    };
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    typedef float2 ret_Constructarray6_float2_[6];
+    ret_Constructarray6_float2_ Constructarray6_float2_(float2 arg0, float2 arg1, float2 arg2, float2 arg3, float2 arg4, float2 arg5) {
+        float2 ret[6] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+        return ret;
+    }
+    
+    static float2 uvs[6] = Constructarray6_float2_(float2(0.0, 0.0), float2(1.0, 0.0), float2(1.0, 1.0), float2(0.0, 0.0), float2(0.0, 1.0), float2(1.0, 1.0));
+    cbuffer u_ratio : register(b0) { float4 u_ratio; }
+    
+    struct VertexOutput_vs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    VertexOutput_vs_main vs_main(VertexInput input)
+    {
+        VertexOutput out_ = (VertexOutput)0;
+    
+        float2 uv_1 = uvs[min(uint((_NagaConstants.first_vertex + input.vertex_index)), 5u)];
+        float4 _e8 = u_ratio;
+        out_.uv = (uv_1 * _e8.xy);
+        out_.position = float4(((uv_1 * float2(2.0, -2.0)) + float2(-1.0, 1.0)), 0.0, 1.0);
+        VertexOutput _e23 = out_;
+        const VertexOutput vertexoutput = _e23;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.uv, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    
+[2026-10-12T10:02:45Z INFO  wgpu_hal::dx12::device] Naga generated shader for "fs_main" at Fragment:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    SamplerState nagaSamplerHeap[2048]: register(s0, space0);
+    SamplerComparisonState nagaComparisonSamplerHeap[2048]: register(s2048, space0);
+    StructuredBuffer<uint> nagaGroup0SamplerIndexArray : register(t0, space0);
+    static const SamplerState u_sampler = nagaSamplerHeap[nagaGroup0SamplerIndexArray[0]];
+    Texture2D<float4> u_texture : register(t1);
+    
+    struct FragmentInput_fs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    float4 fs_main(FragmentInput_fs_main fragmentinput_fs_main) : SV_Target0
+    {
+        VertexOutput input = { fragmentinput_fs_main.position, fragmentinput_fs_main.uv };
+        float4 _e4 = u_texture.Sample(u_sampler, input.uv);
+        return _e4;
+    }
+    
+[2026-10-12T10:02:45Z INFO  wgpu_hal::dx12::device] Naga generated shader for "vs_main" at Vertex:
+    struct NagaConstants {
+        int first_vertex;
+        int first_instance;
+        uint other;
+    };
+    ConstantBuffer<NagaConstants> _NagaConstants: register(b1);
+    
+    struct VertexInput {
+        uint vertex_index : SV_VertexID;
+    };
+    
+    struct VertexOutput {
+        float4 position : SV_Position;
+        float2 uv : LOC0;
+    };
+    
+    typedef float2 ret_Constructarray6_float2_[6];
+    ret_Constructarray6_float2_ Constructarray6_float2_(float2 arg0, float2 arg1, float2 arg2, float2 arg3, float2 arg4, float2 arg5) {
+        float2 ret[6] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+        return ret;
+    }
+    
+    static float2 uvs[6] = Constructarray6_float2_(float2(0.0, 0.0), float2(1.0, 0.0), float2(1.0, 1.0), float2(0.0, 0.0), float2(0.0, 1.0), float2(1.0, 1.0));
+    cbuffer u_ratio : register(b0) { float4 u_ratio; }
+    
+    struct VertexOutput_vs_main {
+        float2 uv : LOC0;
+        float4 position : SV_Position;
+    };
+    
+    VertexOutput_vs_main vs_main(VertexInput input)
+    {
+        VertexOutput out_ = (VertexOutput)0;
+    
+        float2 uv_1 = uvs[min(uint((_NagaConstants.first_vertex + input.vertex_index)), 5u)];
+        float4 _e8 = u_ratio;
+        out_.uv = (uv_1 * _e8.xy);
+        out_.position = float4(((uv_1 * float2(2.0, -2.0)) + float2(-1.0, 1.0)), 0.0, 1.0);
+        VertexOutput _e23 = out_;
+        const VertexOutput vertexoutput = _e23;
+        const VertexOutput_vs_main vertexoutput_1 = { vertexoutput.uv, vertexoutput.position };
+        return vertexoutput_1;
+    }
+    

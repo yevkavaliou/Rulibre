@@ -1,0 +1,10 @@
+   Compiling rulibre-ui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-ui)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.33s
+     Running `target\debug\examples\catalog_probe.exe`
+catalog_20k_ms=56.875
+scroll_redraw_interval n=209 mean_ms=5.544 p95_ms=10.429 max_ms=11.675
+capture docs/ui-item-7/list-1100.png 1100x700
+capture docs/ui-item-7/list-760-selected.png 760x520
+capture docs/ui-item-7/warnings-760.png 760x520
+capture docs/ui-item-7/empty-760.png 760x520
+capture docs/ui-item-7/grid-placeholder-760.png 760x520

@@ -6,15 +6,25 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 :root{--text-secondary:#666;--font-mono:ui-monospace,Consolas,monospace}
-body{margin:0;padding:24px;max-width:720px;margin-inline:auto;font-family:system-ui,sans-serif;background:#f4f4f2;color:#222}
+body{margin:0;padding:24px;max-width:1080px;margin-inline:auto;font-family:system-ui,sans-serif;background:#f4f4f2;color:#222}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (prefers-color-scheme:dark){body{background:#101114;color:#ddd}:root{--text-secondary:#999}}
+.blur-row{display:flex;align-items:center;gap:10px}.blur-row input{width:160px}.blur-row output{width:44px;text-align:right}
 </style></head><body>
 <h2 class="sr-only">Revised Rulibre mockup with separate screens for Home, Search, Jobs and Settings, a Library dropdown for formats and authors, keyboard multi-select with a counter in the details pane, and a fixed bottom bar for the connected reader.</h2>
 <style>
 .wp{background:linear-gradient(135deg,#3d2c78 0%,#1f6f86 50%,#8a3f58 100%);border-radius:12px;padding:14px}
-.rl{--bg:rgba(23,24,27,1);--pn:rgba(30,32,36,1);--ln:rgba(255,255,255,.09);--hv:rgba(255,255,255,.07);--sel:rgba(91,155,255,.22);--tx:#e8e9ec;--t2:#a0a3ad;--t3:#707380;--ac:#5b9bff;--ok:#4cc38a;--wn:#e5a93d;background:var(--bg);color:var(--tx);border:0.5px solid var(--ln);border-radius:10px;overflow:hidden;font-size:13px;line-height:1.4;height:530px;display:flex;flex-direction:column;position:relative;user-select:none}
-.rl.wb{--bg:rgba(20,21,26,.55);--pn:rgba(20,21,26,.35);backdrop-filter:blur(22px)}
+.rl{--bg:rgba(23,24,27,1);--pn:rgba(30,32,36,1);--ln:rgba(255,255,255,.09);--hv:rgba(255,255,255,.07);--sel:rgba(91,155,255,.22);--tx:#e8e9ec;--t2:#a0a3ad;--t3:#707380;--ac:#5b9bff;--ok:#4cc38a;--wn:#e5a93d;background:var(--bg);color:var(--tx);border:0.5px solid var(--ln);border-radius:10px;overflow:hidden;font-size:13px;line-height:1.4;height:650px;display:flex;flex-direction:column;position:relative;user-select:none}
+/* Item 12 / G3: native Browse is simulated here. */
+.rl .export-overlay{position:absolute;inset:34px 0 48px;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:20;padding:16px}
+.rl .export-card{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:20px;width:100%;max-width:390px}
+.rl .export-card h3{margin:0 0 10px;font-size:16px;font-weight:500}
+.rl .export-card p{color:var(--t2);font-size:12px}
+.rl .export-path{overflow-wrap:anywhere;user-select:text;padding:10px;background:var(--bg);border-radius:6px;margin-bottom:12px}
+.rl .export-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.rl .set label>span{min-width:0}
+.rl .set small{overflow-wrap:anywhere;user-select:text}
+/* Item 2: OS window blur is excluded from v1; see ../UI_SPIKE.md. */
 .rl *{box-sizing:border-box}
 .rl button{background:transparent;color:var(--tx);border:0.5px solid var(--ln);border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer;height:auto}
 .rl button:hover{background:var(--hv)}
@@ -49,7 +59,6 @@ body{margin:0;padding:24px;max-width:720px;margin-inline:auto;font-family:system
 .rl .seg{display:flex;border:0.5px solid var(--ln);border-radius:6px;overflow:hidden}
 .rl .seg button{border:none;border-radius:0;padding:3px 8px;color:var(--t2)}.rl .seg button.on{background:var(--hv);color:var(--tx)}
 .rl .rp{width:226px;border-left:0.5px solid var(--ln);background:var(--pn);display:flex;flex-direction:column;position:relative;overflow:hidden;flex:none}
-.rl .amb{position:absolute;top:-40px;left:20px;width:190px;height:190px;border-radius:50%;filter:blur(46px);opacity:.5;pointer-events:none}
 .rl .pb{padding:14px 12px 12px;position:relative;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
 .rl .cover{height:112px;width:76px;border-radius:5px;display:flex;align-items:flex-end;padding:5px;font-size:9px;color:#fff;line-height:1.2;flex:none}
 .rl .pb h3{margin:0;font-size:14px;font-weight:500;line-height:1.3}
@@ -63,15 +72,69 @@ body{margin:0;padding:24px;max-width:720px;margin-inline:auto;font-family:system
 .rl .pg{height:3px;background:var(--hv);border-radius:2px;margin-top:4px}.rl .pg i{display:block;height:100%;background:var(--ac);border-radius:2px}
 .rl .bot{height:46px;border-top:0.5px solid var(--ln);display:flex;align-items:center;gap:12px;padding:0 12px;font-size:12px;flex:none}
 .rl .bot .sp{flex:1}
+.rl .reader-pop{position:absolute;bottom:50px;left:12px;width:min(360px,calc(100% - 24px));max-height:360px;overflow:auto;background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:8px;z-index:10;box-shadow:0 8px 24px #0006;user-select:text}
+.rl .reader-selector{border:none;padding:4px 6px;margin-left:-6px;display:inline-flex;align-items:center;gap:6px;min-width:64px;max-width:230px;font:inherit}
+.rl .reader-selector .reader-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rl .reader-selector .dot{flex:none;margin-right:0}
+.rl .reader-selector .reader-chevron{display:block;width:16px;height:16px;color:var(--tx);flex:0 0 16px}
+.rl .reader-selector[aria-expanded="true"]{background:var(--hv)}
+.rl .reader-mount{color:var(--t2);white-space:nowrap}
+.rl .reader-pop header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rl .reader-choice{display:block;width:100%;text-align:left;padding:8px;margin-bottom:6px}
+.rl .reader-choice small{display:block;color:var(--t2);overflow-wrap:anywhere}
+.rl .reader-pop select,.rl .reader-pop input{background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:5px;padding:6px;max-width:100%;font:inherit}
+.rl .reader-pop .manual-path{width:100%;margin:8px 0}
+.rl .reader-warning{color:var(--wn);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
 .rl .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
 .rl .pop{position:absolute;bottom:42px;left:12px;right:12px;background:var(--bg);border:0.5px solid var(--ln);border-radius:8px;padding:4px;z-index:5}
 .rl .pop div{padding:6px 8px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;justify-content:space-between}.rl .pop div:hover{background:var(--hv)}.rl .pop small{color:var(--t3)}
 .rl .set label{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:10px 16px;border-bottom:0.5px solid var(--ln)}
 .rl .set small{display:block;color:var(--t3);font-size:11px}
 .rl .emp{padding:34px 20px;text-align:center;color:var(--t3)}
+.rl .setup-wrap{height:100%;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.rl .setup{width:100%;max-width:430px;background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:24px;user-select:text}
+.rl .setup h3{margin:0 0 8px;font-size:20px;font-weight:500}
+.rl .setup p{color:var(--t2);margin:0 0 18px}
+.rl .setup label{display:block;margin-bottom:6px;color:var(--t2)}
+.rl .path-row{display:flex;gap:8px;margin-bottom:10px}
+.rl .path-row input{min-width:0;flex:1;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:8px;font:inherit}
+.rl .setup button{padding:8px 12px}.rl button:disabled{opacity:.45;cursor:default}
+.rl .setup-status{min-height:40px;color:var(--wn);font-size:12px;overflow-wrap:anywhere;margin-bottom:12px}
+.rl .setup-actions{display:flex;justify-content:flex-end}
+.rl .scan-state{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:var(--t2)}
+/* Item 11 / G2: notices stay above the permanent reader bar. */
+.rl .toasts{position:absolute;right:12px;bottom:58px;width:min(340px,calc(100% - 24px));max-height:280px;overflow:auto;display:flex;flex-direction:column;gap:8px;z-index:12;pointer-events:none}
+.rl .toast{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border:1px solid var(--ln);border-radius:8px;background:var(--pn);box-shadow:0 4px 16px #0005;pointer-events:auto;user-select:text}
+.rl .toast .toast-icon{flex:none;color:var(--ok)}.rl .toast.error .toast-icon{color:#ef7777}
+.rl .toast span{flex:1;min-width:0;overflow-wrap:anywhere}.rl .toast button{flex:none}
+.rl .jr .failed{color:#ef7777}.rl .jr small{overflow-wrap:anywhere;user-select:text}
+.rl .jr .job-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl .bd.jobs-body{overflow:auto}.rl .bot{gap:8px}.rl .reader-mount{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.rl .transfer-state{flex:none;max-width:115px;overflow-wrap:normal}
+.demo-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-size:12px}
+/* Post-item-13 review: readable text, configurable covers and draggable details. */
+.rl{--reading-size:16px;--cover-size:160px;--details-width:300px}
+.rl .rp{width:var(--details-width);min-width:240px}
+.rl .detail-resizer{width:7px;flex:none;cursor:col-resize;background:var(--pn);touch-action:none;position:relative}
+.rl .detail-resizer:hover,.rl .detail-resizer.dragging{background:var(--ac)}
+.rl .grid{grid-template-columns:repeat(auto-fill,minmax(var(--cover-size),1fr))}
+.rl .grid .cd{max-width:var(--cover-size)}
+.rl .cd b,.rl .pb h3,.rl .nv,.rl .row,.rl .set label{font-size:var(--reading-size)}
+.rl .cd small,.rl .meta,.rl .desc,.rl .sl,.rl button,.rl .set small{font-size:calc(var(--reading-size) - 2px)}
+.rl .cover{width:min(var(--cover-size),100%);height:auto;aspect-ratio:2/3;font-size:12px}
+.rl .pb{overflow:auto}
+.rl .desc{overflow:visible;max-height:none;flex-shrink:0}
+.rl .pop{background:#292d35;border:1px solid #596171;box-shadow:0 8px 24px #0008}
+.rl .pop [data-c]{color:#f4f6ff;background:#33445e;margin:3px 0;border:1px solid #6688b5}
+.rl .pop [data-c]:hover{background:#415f89}
+.rl .pop small{color:#ccd7e6}
+.rl .pop .no-route{color:#b0b5c0;cursor:default;display:block;line-height:1.5}
+.rl .pop .no-route small{display:block;color:#b0b5c0}
+.rl .set select{background:var(--bg);color:var(--tx);border:1px solid #596171;border-radius:6px;padding:6px;font:inherit}
 </style>
 
-<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">Try it: Ctrl+click or Shift+click selects several books. Open Search, Jobs and Settings from the sidebar. Click the reader status at the bottom to cycle device states.</div>
+<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">Try it: Ctrl+click or Shift+click selects several books. Open Search, Jobs and Settings from the sidebar. Use Item 10 preview to connect several readers, then click the reader name ▾ in the bottom bar to choose one.</div>
+<div class="demo-controls"><label>Item 5 preview: <select id="setup-demo"><option value="home">Existing design</option><option value="first">First run</option><option value="deleted">Saved library missing</option><option value="corrupt">Corrupted config</option></select></label><label>Scan result: <select id="scan-demo"><option value="ok">Books + warnings</option><option value="error">Unreadable library</option><option value="empty">Empty library (item 7)</option></select></label><span>Browse uses a sample folder; validation and scans are simulated.</span></div>
 
 <div class="wp">
 <div class="rl" id="app">
@@ -79,7 +142,8 @@ body{margin:0;padding:24px;max-width:720px;margin-inline:auto;font-family:system
   <div class="main">
     <div class="side" id="side"></div>
     <div class="ctr"><div id="hd"></div><div class="bd" id="bd"></div></div>
-    <div class="rp" id="rp"><div class="amb" id="amb"></div><div class="pb" id="pb"></div></div>
+    <div class="detail-resizer" id="detail-resizer" role="separator" aria-orientation="vertical" aria-label="Resize book details" tabindex="0"></div>
+    <div class="rp" id="rp"><div class="pb" id="pb"></div></div>
   </div>
   <div class="bot" id="bot"></div>
 </div>
@@ -95,14 +159,88 @@ var B=[
 {t:"Zima Blue",a:"Alastair Reynolds",f:["EPUB"],h:225,d:"A short story about an artist whose work is a single shade of blue.",p:"Hachette UK",y:"2009"},
 {t:"Harry Potter i kamień filozoficzny",a:"J. K. Rowling",f:["EPUB","MOBI"],h:280,d:"Pierwszy tom przygód młodego czarodzieja.",p:"Media Rodzina",y:"2016"},
 {t:"Quick Start Guide",a:"John Schember",f:["EPUB","AZW3"],h:340,d:"A guide to getting started.",p:"",y:""}];
-var S={scr:"home",sel:[0],anchor:0,grid:true,side:true,rp:true,dev:1,q:"",filt:"all",jobs:[],pop:false,lib:true,fmt:false,aut:false,wb:false,am:true,pk:false};
+var S={scr:"home",sel:[0],anchor:0,grid:true,side:true,rp:true,dev:1,q:"",filt:"all",jobs:[],pop:false,lib:true,fmt:false,aut:false,op:70,bl:true,pk:false,exportFolder:"",textSize:16,coverSize:160,detailsWidth:300};
 var JID=0;
+// Item 12 design review: folder picker and validation are simulated.
+var exportControls=document.createElement("div");exportControls.className="demo-controls";
+exportControls.innerHTML='<label>Item 12 preview: <select id="export-demo"><option value="valid">Writable export folder</option><option value="inside">Inside the library</option><option value="missing">Missing folder</option><option value="readonly">Read-only folder</option><option value="save">Settings save fails</option></select></label><button id="reset-export">Reset export folder</button><span>Settings → Change…, or Convert before selecting a folder. No files are accessed.</span>';
+document.querySelector(".wp").before(exportControls);
+$("reset-export").onclick=function(){S.exportFolder="";render()};
+function convertSelection(target,selected){selected.forEach(function(i){add("Converting to "+target+" · "+B[i].t.slice(0,16)+"…",0)});render()}
+function chooseExport(continuation){
+var overlay=document.createElement("div");overlay.className="export-overlay";
+overlay.innerHTML='<section class="export-card" role="dialog" aria-modal="true" aria-labelledby="export-title"><h3 id="export-title">Choose an export folder</h3><p>Converted books will be saved here. Choose a writable folder outside your Calibre library.</p><div class="export-path" id="chosen-export"></div><button id="browse-export">Browse…</button><p id="export-status" role="status"></p><div class="export-actions"><button id="cancel-export">Cancel</button><button class="pri" id="use-export" disabled>Use folder</button></div></section>';
+$("app").appendChild(overlay);var chosen="";
+$("chosen-export").textContent=S.exportFolder||"No folder selected";
+function close(){document.removeEventListener("keydown",escape);overlay.remove()}
+function escape(e){if(e.key=="Escape"){e.stopPropagation();close()}}
+document.addEventListener("keydown",escape);$("cancel-export").onclick=close;
+$("browse-export").onclick=function(){
+var mode=$("export-demo").value;
+chosen=mode=="inside"?"D:\Calibre Library\Exports":mode=="missing"?"D:\Missing folder":mode=="readonly"?"D:\Read-only exports":"D:\Rulibre Exports";
+$("chosen-export").textContent=chosen;
+var error=mode=="inside"?"Choose a folder outside the Calibre library.":mode=="missing"?"This folder does not exist. Choose an existing folder.":mode=="readonly"?"This folder is read-only. Choose a writable folder.":"";
+$("export-status").textContent=error;$("export-status").style.color=error?"var(--wn)":"var(--t2)";$("use-export").disabled=!!error;
+};
+$("use-export").onclick=function(){if(!chosen||this.disabled)return;if($("export-demo").value=="save"){toast("Could not save the export folder. Previous settings were kept.","error");close();return}S.exportFolder=chosen;close();render();if(continuation)continuation()};
+$("browse-export").focus();
+}
+// Item 11 design review. All transfers and failures below are simulated.
+var toasts=[],toastId=0;
+var item11Controls=document.createElement("div");item11Controls.className="demo-controls";
+item11Controls.innerHTML='<label>Item 11 preview: <select id="send-outcome"><option value="success">Send completes</option><option value="conflict">Destination exists</option><option value="removed">Reader removed during copy</option><option value="permission">Permission denied</option></select></label><button id="three-sends">Queue three books</button><button id="notice-demo">Show error toast</button><span>Success closes after 5 seconds; errors stay until closed. Transfers use simulated files.</span>';
+document.querySelector(".wp").before(item11Controls);
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function renderToasts(){var old=$("toasts");if(old)old.remove();if(!toasts.length)return;var area=document.createElement("div");area.id="toasts";area.className="toasts";
+toasts.forEach(function(t){var item=document.createElement("div");item.className="toast "+t.kind;item.setAttribute("role",t.kind=="error"?"alert":"status");var icon=document.createElement("span");icon.className="toast-icon";icon.textContent=t.kind=="error"?"!":"✓";item.appendChild(icon);var message=document.createElement("span");message.textContent=t.message;item.appendChild(message);var close=document.createElement("button");close.textContent="×";close.setAttribute("aria-label","Dismiss notification");close.onclick=function(){toasts=toasts.filter(function(x){return x.id!=t.id});renderToasts()};item.appendChild(close);area.appendChild(item)});$("app").appendChild(area)}
+function toast(message,kind){var id=++toastId;toasts.push({id:id,message:message,kind:kind});renderToasts();if(kind!="error")setTimeout(function(){toasts=toasts.filter(function(t){return t.id!=id});renderToasts()},5000)}
+function cancelJob(id){var job=S.jobs.filter(function(j){return j.id==id})[0];if(!job||job.s=="done")return;if(job.scan){cancelScan();return}job.s="done";job.m="Cancelled";job.failed=false;toast("Cancelled · "+job.t,"notice");render()}
+function sendBooks(indices){var reader=readerSelected===null?null:readers[readerSelected];if(!S.dev||!reader||reader.ro||S.scr=="setup")return;indices.forEach(function(i){add(B[i].t,1,reader)});render()}
+$("three-sends").onclick=function(){sendBooks([2,3,4]);S.scr="jobs";render()};
+$("notice-demo").onclick=function(){toast("Destination already exists: E:\\Cyberiada.epub. Choose another destination or remove the existing file before trying again.","error")};
+// Item 10 / G4: reader name dropdown, revised following user feedback.
+var readerOpen=false,manualOpen=false,readerSelected=0,readerError="",readerKind="Kobo",readerPath="";
+var readers=[{name:"Kobo Libra 2",label:"KOBOeReader",path:"E:\\",fs:"FAT32",ro:false},{name:"Kindle Paperwhite",label:"Kindle",path:"F:\\",fs:"FAT32",ro:false}];
+var deviceControls=document.createElement("div");deviceControls.className="demo-controls";
+deviceControls.innerHTML='<label>Item 10 preview: <select id="device-demo"><option value="one">One reader</option><option value="none">No reader</option><option value="many">Several readers</option><option value="readonly">Read-only reader</option><option value="unknown">Free space unknown</option><option value="warning">Detection warning</option><option value="failed">Polling failed</option></select></label><span>Manual Browse uses a sample mount root; no files are accessed.</span>';
+document.querySelector(".wp").before(deviceControls);
+var deviceDemo="one";
+document.getElementById("device-demo").onchange=function(){deviceDemo=this.value;S.dev=deviceDemo=="none"||deviceDemo=="failed"?0:deviceDemo=="many"?2:1;readerSelected=S.dev==1?0:null;readers[0].ro=deviceDemo=="readonly";readerOpen=false;manualOpen=false;readerError="";renderBot()};
+function renderReaderPopover(){
+var old=$("reader-pop");if(old)old.remove();if(!readerOpen)return;
+var pop=document.createElement("section");pop.id="reader-pop";pop.className="reader-pop";pop.setAttribute("aria-label","Choose reader");
+pop.innerHTML=(manualOpen?'<header><b>Select folder manually</b><button id="close-reader" aria-label="Close reader selection">Close</button></header>':'')+'<div id="reader-options"></div><button id="manual-reader">Select folder manually…</button><div id="manual-fields"></div>';
+$("app").appendChild(pop);if($("close-reader"))$("close-reader").onclick=function(){readerOpen=false;renderBot()};
+var options=$("reader-options");
+options.setAttribute("role","menu");options.setAttribute("aria-label","Detected readers");
+if(!S.dev)options.textContent=deviceDemo=="failed"?"Reader detection unavailable. Try again after the next poll.":"No readers detected.";
+else readers.slice(0,S.dev==2?2:1).forEach(function(r,i){var choice=document.createElement("button");choice.className="reader-choice";choice.setAttribute("role","menuitemradio");choice.setAttribute("aria-checked",readerSelected===i?"true":"false");choice.innerHTML='<b></b><small></small>';choice.querySelector("b").textContent=(readerSelected===i?"✓ ":"")+r.name;choice.querySelector("small").textContent=r.label+" · "+r.path+" · "+r.fs+(r.ro?" · Read-only":" · Writable");choice.onclick=function(){readerSelected=i;readerOpen=false;manualOpen=false;renderBot()};options.appendChild(choice)});
+$("manual-reader").onclick=function(){manualOpen=!manualOpen;renderReaderPopover()};
+if(manualOpen){$("manual-fields").innerHTML='<p style="color:var(--t2);font-size:12px">Choose the mounted reader root and its type. The folder must contain .kobo for Kobo or documents for Kindle.</p><label>Reader type <select id="reader-kind"><option>Kobo</option><option>Kindle</option></select></label><input class="manual-path" id="reader-path" aria-label="Reader folder" placeholder="E:\\"><button id="browse-reader">Browse…</button> <button class="pri" id="use-reader">Use folder</button><p id="reader-error" style="color:var(--wn);font-size:12px" role="status"></p>';
+$("reader-kind").value=readerKind;$("reader-kind").onchange=function(){readerKind=this.value};$("reader-path").value=readerPath;$("reader-path").oninput=function(){readerPath=this.value};$("reader-error").textContent=readerError;
+$("browse-reader").onclick=function(){readerPath=readerKind=="Kobo"?"E:\\":"F:\\";readerError="";renderReaderPopover()};
+$("use-reader").onclick=function(){var path=readerPath.trim(),i=readerKind=="Kobo"?0:1;if(path!==readers[i].path){readerError="Choose a mounted local filesystem root with the required reader folder. A Calibre library or MTP device cannot be used.";renderReaderPopover();return}if(readers[i].ro){readerError="Mounted filesystem is read-only. Choose a writable reader.";renderReaderPopover();return}S.dev=2;readerSelected=i;readerOpen=false;renderBot()};
+}}
+document.addEventListener("click",function(e){if(readerOpen&&!e.target.closest("#reader-pop")&&!e.target.closest("#reader-selector")&&!e.target.closest("#manual-shortcut")){readerOpen=false;renderBot()}});
+document.addEventListener("keydown",function(e){if(e.key=="Escape"&&readerOpen){readerOpen=false;renderBot()}});
+// Item 7 design review: header refresh, empty library, scan warning list.
+var item7State="books";
+var item7Controls=document.createElement("div");
+item7Controls.className="demo-controls";
+item7Controls.innerHTML='<label>Item 7 preview: <select id="item7-demo"><option value="books">Books</option><option value="empty">Empty library</option><option value="warnings">Scan warnings</option></select></label>';
+document.querySelector(".wp").before(item7Controls);
+document.getElementById("item7-demo").onchange=function(){item7State=this.value;S.scr="home";scanState="idle";render()};
+var showWarnings=false;
+var setupPath="",setupError="",scanState="idle",scanTimer=null,scanJob=null;
+function enterSetup(kind){clearTimeout(scanTimer);if(scanJob)scanJob.s="done";scanJob=null;scanState="idle";S.scr="setup";S.sel=[];S.pop=false;setupPath="";setupError=kind=="corrupt"?"Could not read C:\\Users\\Reader\\AppData\\Roaming\\rulibre\\config.toml. Choose your library again.":kind=="deleted"?"The saved library D:\\Calibre Library is no longer available. Choose an existing library folder.":"";render()}
+function startScan(){showWarnings=false;clearTimeout(scanTimer);S.scr="home";S.filt="all";S.sel=[];scanState="running";scanJob={id:++JID,t:"Scan library",s:"run",p:0,copy:false,scan:true,m:""};S.jobs.push(scanJob);render();scanTimer=setTimeout(function(){scanState=$("scan-demo").value=="error"?"failed":"done";scanJob.s="done";scanJob.m=scanState=="failed"?"Could not read D:\\Calibre Library. Check folder permissions and try again.":"Scanned · 7 books · 1 warning";render()},3500)}
+function cancelScan(){clearTimeout(scanTimer);scanState="cancelled";scanJob.s="done";scanJob.m="Cancelled";render()}
 function $(i){return document.getElementById(i)}
 function col(h){return "hsl("+h+",42%,34%)"}
 function vis(){var q=S.q.toLowerCase();return B.map(function(b,i){return i}).filter(function(i){var b=B[i];if(S.scr=="search")return q&&(b.t+b.a).toLowerCase().indexOf(q)>-1;return S.filt=="all"||b.f.indexOf(S.filt)>-1||b.a==S.filt})}
 function chev(o){return '<i class="ti ti-chevron-'+(o?'down':'right')+' n" aria-hidden="true"></i>'}
 function nact(){return S.jobs.filter(function(j){return j.s!="done"}).length}
-function renderSide(){var s=$("side");s.style.display=S.side?"flex":"none";if(!S.side)return;var au=[],f={},sc=S.scr,h="";
+function renderSide(){var s=$("side");s.style.display=S.side&&S.scr!="setup"?"flex":"none";if(!S.side||S.scr=="setup")return;var au=[],f={},sc=S.scr,h="";
 B.forEach(function(b){if(au.indexOf(b.a)<0)au.push(b.a);b.f.forEach(function(x){f[x]=(f[x]||0)+1})});
 function nv(id,ic,lb,on,ex){return '<div class="nv'+(on?' on':'')+'" id="'+id+'"><i class="ti ti-'+ic+'" aria-hidden="true"></i><span class="l">'+lb+'</span>'+(ex||'')+'</div>'}
 h+=nv("n-h","home",'Home',sc=="home"&&S.filt=="all");
@@ -123,26 +261,39 @@ if($("n-f"))$("n-f").onclick=function(){S.fmt=!S.fmt;renderSide()};
 if($("n-a"))$("n-a").onclick=function(){S.aut=!S.aut;renderSide()};
 Array.prototype.forEach.call(s.querySelectorAll("[data-f]"),function(e){e.onclick=function(){S.scr="home";S.filt=this.dataset.f;render()}})}
 function renderHd(){var sc=S.scr,h="";
-if(sc=="home")h='<div class="bar1"><h4 id="ttl"></h4><span id="cnt" style="color:var(--t3);font-size:12px"></span><div class="seg"><button id="v-l" aria-label="List"><i class="ti ti-list" aria-hidden="true"></i></button><button id="v-g" aria-label="Cover grid"><i class="ti ti-layout-grid" aria-hidden="true"></i></button></div></div>';
+if(sc=="setup"){$("hd").innerHTML="";return}
+if(sc=="home")h='<div class="bar1"><h4 id="ttl"></h4><span id="cnt" style="color:var(--t3);font-size:12px"></span><button class="ic" id="rescan-home" aria-label="Rescan" title="Rescan"><i class="ti ti-refresh" aria-hidden="true"></i></button><button id="scan-warnings" style="display:none">1 warning</button><div class="seg"><button id="v-l" aria-label="List"><i class="ti ti-list" aria-hidden="true"></i></button><button id="v-g" aria-label="Cover grid"><i class="ti ti-layout-grid" aria-hidden="true"></i></button></div></div>';
 else if(sc=="search")h='<div class="bar1"><div class="sbar"><i class="ti ti-search" style="color:var(--t3)" aria-hidden="true"></i><input id="qi" placeholder="Search by title, author or series" value="'+S.q+'"></div></div>';
 else if(sc=="jobs")h='<div class="bar1"><h4>Jobs</h4><button id="clr">Clear finished</button></div>';
 else h='<div class="bar1"><h4>Settings</h4></div>';
 $("hd").innerHTML=h;
-if(sc=="home"){$("v-l").onclick=function(){S.grid=false;renderBd()};$("v-g").onclick=function(){S.grid=true;renderBd()}}
+if(sc=="home"){$("rescan-home").disabled=scanState=="running";$("rescan-home").onclick=startScan;$("scan-warnings").style.display=scanState=="done"&&$("scan-demo").value=="ok"?"":"none";$("scan-warnings").onclick=function(){showWarnings=!showWarnings;renderBd()};$("v-l").onclick=function(){S.grid=false;renderBd()};$("v-g").onclick=function(){S.grid=true;renderBd()}}
 if(sc=="search")$("qi").oninput=function(){S.q=this.value;renderBd();renderRight()};
 if(sc=="jobs")$("clr").onclick=function(){S.jobs=S.jobs.filter(function(j){return j.s!="done"});render()}}
 function pick(i,e,v){if(e.shiftKey&&v.indexOf(S.anchor)>-1){var a=v.indexOf(S.anchor),b=v.indexOf(i);S.sel=v.slice(Math.min(a,b),Math.max(a,b)+1)}
 else if(e.ctrlKey||e.metaKey){var k=S.sel.indexOf(i);if(k>-1)S.sel.splice(k,1);else S.sel.push(i);S.anchor=i}
 else{S.sel=[i];S.anchor=i}
 S.rp=true;S.pop=false;renderBd();renderRight();renderBot();renderTop()}
-function renderBd(){var sc=S.scr,el=$("bd");
-if(sc=="settings"){el.innerHTML='<div class="set"><label><span>Window blur<small>OS Mica or Acrylic behind the window</small></span><input type="checkbox" id="wb"'+(S.wb?' checked':'')+'></label><label><span>Cover tint<small>Blurred cover colour behind the details pane</small></span><input type="checkbox" id="am"'+(S.am?' checked':'')+'></label><label><span>Prefer KEPUB for Kobo<small>Convert EPUB to KEPUB before sending</small></span><input type="checkbox" id="pk"'+(S.pk?' checked':'')+'></label><label><span>Library folder<small>D:\\Calibre Library</small></span><button>Change…</button></label></div>';
-$("wb").onchange=function(){S.wb=this.checked;$("app").classList.toggle("wb",S.wb)};$("am").onchange=function(){S.am=this.checked;renderRight()};$("pk").onchange=function(){S.pk=this.checked};return}
+function renderBd(){var sc=S.scr,el=$("bd");el.classList.toggle("jobs-body",sc=="jobs");
+if(sc=="setup"){
+el.innerHTML='<div class="setup-wrap"><form class="setup" id="setup-form"><h3>Choose your Calibre library</h3><p>Select the folder containing metadata.db and your books.</p><label for="library-path">Library folder</label><div class="path-row"><input id="library-path" placeholder="D:\\Calibre Library" autocomplete="off"><button type="button" id="browse-library">Browse…</button></div><div class="setup-status" id="setup-status" role="status"></div><div class="setup-actions"><button class="pri" id="continue-library" type="submit">Continue</button></div></form></div>';
+$("library-path").value=setupPath;$("setup-status").textContent=setupError;$("continue-library").disabled=!setupPath.trim();
+$("library-path").oninput=function(){setupPath=this.value;setupError="";$("setup-status").textContent="";$("continue-library").disabled=!setupPath.trim()};
+$("browse-library").onclick=function(){setupPath="D:\\Calibre Library";setupError="";renderBd()};
+$("setup-form").onsubmit=function(e){e.preventDefault();if(setupPath.trim().replace(/^"|"$/g,"")!="D:\\Calibre Library"){setupError="This folder is not a Calibre library. Choose the folder containing metadata.db.";$("setup-status").textContent=setupError;return}startScan()};return}
+if(sc=="home"&&["running","failed","cancelled"].indexOf(scanState)>-1){$("ttl").textContent="Home";$("cnt").textContent="";el.innerHTML='<div class="scan-state"><span role="status">'+(scanState=="running"?'Scanning library…':scanState=="failed"?'Could not read D:\\Calibre Library. Check folder permissions and try again.':'Scan cancelled.')+'</span><span style="font-size:12px">'+(scanState=="running"?'You can keep using the window while books are loaded.':'Choose another library or try scanning again.')+'</span><div>'+(scanState=="running"?'<button id="cancel-scan">Cancel scan</button>':'<button id="retry-scan">Retry scan</button>')+' <button id="change-scan-library">Choose another library…</button></div></div>';if($("cancel-scan"))$("cancel-scan").onclick=cancelScan;if($("retry-scan"))$("retry-scan").onclick=startScan;$("change-scan-library").onclick=function(){enterSetup("first")};return}
+if(sc=="settings"){el.innerHTML='<div class="set"><label><span>Text size<small>Applies throughout the interface</small></span><select id="text-size"><option value="14">14 px</option><option value="16">16 px</option><option value="18">18 px</option><option value="20">20 px</option></select></label><label><span>Cover size<small>Grid and book details</small></span><select id="cover-size"><option value="120">Small · 120 px</option><option value="160">Medium · 160 px</option><option value="200">Large · 200 px</option></select></label><label><span>Window opacity<small>Lower values let the desktop show through the window · 100 % is opaque</small></span><span class="blur-row"><input type="range" id="am" min="10" max="100" step="5" value="'+S.op+'"><output id="am-out">'+S.op+' %</output></span></label><label><span>Blur window<small>Draw the window over a blurred desktop · needs an opacity below 100 %</small></span><input type="checkbox" id="bl"'+(S.bl?' checked':'')+'></label><label><span>Prefer KEPUB for Kobo<small>Convert EPUB to KEPUB before sending</small></span><input type="checkbox" id="pk"'+(S.pk?' checked':'')+'></label><label><span>Library folder<small>D:\\Calibre Library</small></span><button id="settings-library">Change…</button></label><label><span>Export folder<small id="export-path"></small></span><button id="settings-export">Change…</button></label></div>';
+$("text-size").value=S.textSize;$("cover-size").value=S.coverSize;
+$("text-size").onchange=function(){S.textSize=Number(this.value);applyAppearance()};
+$("cover-size").onchange=function(){S.coverSize=Number(this.value);applyAppearance()};
+$("am").oninput=function(){S.op=Number(this.value);$("am-out").textContent=S.op+" %";applyBlur()};$("bl").onchange=function(){S.bl=this.checked;applyBlur()};$("pk").onchange=function(){S.pk=this.checked};$("export-path").textContent=S.exportFolder||"Not selected";$("settings-library").onclick=function(){enterSetup("first")};$("settings-export").onclick=function(){chooseExport(null)};return}
 if(sc=="jobs"){var r=S.jobs.filter(function(j){return j.s=="run"}),w=S.jobs.filter(function(j){return j.s=="wait"}),d=S.jobs.filter(function(j){return j.s=="done"}).slice().reverse(),h="";
-var it=function(j){return '<div class="jr"><div>'+j.t+'<small>'+(j.s=="run"?(j.copy?"Copying · "+j.p+"%":"Converting…"):j.s=="wait"?"Waiting":j.m)+'</small></div>'+(j.s=="run"?'<div style="width:110px"><div class="pg"><i style="width:'+(j.copy?j.p:35)+'%"></i></div></div><button data-x="'+j.id+'">Cancel</button>':j.s=="wait"?'<button data-x="'+j.id+'">Cancel</button>':'')+'</div>'};
+var it=function(j){return '<div class="jr"><div><div class="job-title" title="'+escapeHtml(j.t)+'">'+escapeHtml(j.t)+'</div><small'+(j.failed?' class="failed"':'')+'>'+(j.s=="run"?(j.scan?"Scanning library…":j.copy?escapeHtml(j.stage)+(j.stage=="Copying"?" · "+j.p+"%":""):"Converting…"):j.s=="wait"?"Waiting":escapeHtml(j.m))+'</small></div>'+(j.s=="run"||j.s=="wait"?((j.copy&&j.stage=="Copying"&&j.s=="run")?'<div style="width:80px"><div class="pg"><i style="width:'+j.p+'%"></i></div></div>':'')+'<button data-x="'+j.id+'">Cancel</button>':'')+'</div>'};
 if(!S.jobs.length)h='<div class="emp">No jobs yet.<br>Send or convert a book to start one.</div>';
-else{if(r.length)h+='<div class="jt">RUNNING</div>'+r.map(it).join("");if(w.length)h+='<div class="jt">UP NEXT</div>'+w.map(it).join("");if(d.length)h+='<div class="jt">DONE</div>'+d.map(it).join("")}
-el.innerHTML=h;Array.prototype.forEach.call(el.querySelectorAll("[data-x]"),function(e){e.onclick=function(){var id=+this.dataset.x;S.jobs=S.jobs.filter(function(j){return j.id!=id});render()}});return}
+else{if(r.length)h+='<div class="jt">RUNNING</div>'+r.map(it).join("");if(w.length)h+='<div class="jt">UP NEXT</div>'+w.map(it).join("");if(d.length)h+='<div class="jt">DONE · LAST 20</div>'+d.slice(0,20).map(it).join("")}
+el.innerHTML=h;Array.prototype.forEach.call(el.querySelectorAll("[data-x]"),function(e){e.onclick=function(){cancelJob(+this.dataset.x)}});return}
+if(sc=="home"&&showWarnings){el.innerHTML='<div style="padding:12px;overflow:auto;height:100%"><div style="display:flex;justify-content:space-between"><b>Scan warnings</b><button id="close-warnings">Close</button></div><p style="color:var(--t2);user-select:text">Could not read a book folder. Other books remain available.</p></div>';$("close-warnings").onclick=function(){showWarnings=false;renderBd()};return}
+if(sc=="home"&&scanState=="done"&&$("scan-demo").value=="empty"){$("ttl").textContent="Home";$("cnt").textContent="0 books";el.innerHTML='<div class="scan-state"><span>No books found</span><span style="font-size:12px">Rescan this library or choose another folder.</span><div><button id="empty-rescan">Rescan</button> <button id="empty-change">Change library</button></div></div>';$("empty-rescan").onclick=startScan;$("empty-change").onclick=function(){enterSetup("first")};return}
 var v=vis();
 if(sc=="home"){$("ttl").textContent=S.filt=="all"?"Home":"Library · "+S.filt;$("cnt").textContent=v.length+" books";$("v-l").className=S.grid?"":"on";$("v-g").className=S.grid?"on":""}
 if(sc=="search"&&!S.q){el.innerHTML='<div class="emp">Type to search by title or author.</div>';return}
@@ -151,28 +302,65 @@ var g=sc=="home"&&S.grid;
 if(g)el.innerHTML='<div class="grid">'+v.map(function(i){var b=B[i];return '<div class="cd'+(S.sel.indexOf(i)>-1?' on':'')+'" data-i="'+i+'"><div class="cv" style="background:'+col(b.h)+'">'+b.t+'</div><b>'+b.t+'</b><small>'+b.a+'</small></div>'}).join("")+'</div>';
 else el.innerHTML=(sc=="search"?'<div style="padding:0 12px 6px;font-size:12px;color:var(--t3)">'+v.length+' results</div>':'')+v.map(function(i){var b=B[i];return '<div class="row'+(S.sel.indexOf(i)>-1?' on':'')+'" data-i="'+i+'"><div class="th" style="background:'+col(b.h)+'"></div><span>'+b.t+'</span><span class="au">'+b.a+'</span><span>'+b.f.map(function(x){return '<span class="tag">'+x+'</span>'}).join("")+'</span></div>'}).join("");
 Array.prototype.forEach.call(el.querySelectorAll("[data-i]"),function(e){e.onclick=function(ev){pick(+this.dataset.i,ev,v)}})}
-function renderRight(){var show=S.rp&&S.scr=="home";$("rp").style.display=show?"flex":"none";if(!show)return;var n=S.sel.length,am=$("amb");
-am.style.display=S.am?"block":"none";am.style.background=n==1?"hsl("+B[S.sel[0]].h+",70%,50%)":"var(--ac)";
-var cv='<button id="cvb" style="margin-top:auto">'+(n>1?'Convert '+n+' books':'Convert')+' ▾</button>'+(S.pop?'<div class="pop"><div data-c="KEPUB">EPUB → KEPUB <small>kepubify</small></div><div data-c="AZW3">to AZW3 <small>ebook-convert</small></div><div style="color:var(--t3)">PDF <small>no route</small></div></div>':'');
+function renderRight(){var show=S.rp&&S.scr=="home"&&["idle","done"].indexOf(scanState)>-1;$("rp").style.display=show?"flex":"none";if(!show)return;var n=S.sel.length;
+var cv='<button id="cvb" style="margin-top:auto">'+(n>1?'Convert '+n+' books':'Convert')+' ▾</button>'+(S.pop?'<div class="pop"><div data-c="KEPUB">EPUB → KEPUB <small>kepubify</small></div><div data-c="AZW3">to AZW3 <small>ebook-convert</small></div><div class="no-route">PDF · no route<small>No supported converter is available</small></div></div>':'');
 if(n==0)$("pb").innerHTML='<div class="emp">Select a book to see its details.</div>';
 else if(n==1){var b=B[S.sel[0]];$("pb").innerHTML='<div class="cover" style="background:'+col(b.h)+'">'+b.t+'</div><h3>'+b.t+'</h3><div class="meta"><b>Author</b><span>'+b.a+'</span>'+(b.p?'<b>Publisher</b><span>'+b.p+'</span>':'')+(b.y?'<b>Year</b><span>'+b.y+'</span>':'')+'<b>Formats</b><span>'+b.f.join(", ")+'</span></div><div class="desc">'+b.d+'</div>'+cv}
 else $("pb").innerHTML='<div class="big">'+n+' selected</div>'+S.sel.slice(0,5).map(function(i){return '<div class="sl">'+B[i].t+'</div>'}).join("")+(n>5?'<div class="sl">+ '+(n-5)+' more</div>':'')+cv;
 if($("cvb"))$("cvb").onclick=function(){S.pop=!S.pop;renderRight()};
-Array.prototype.forEach.call($("pb").querySelectorAll("[data-c]"),function(e){e.onclick=function(){var c=this.dataset.c;S.pop=false;S.sel.forEach(function(i){add("Converting to "+c+" · "+B[i].t.slice(0,16)+"…",0)});renderRight()}})}
+Array.prototype.forEach.call($("pb").querySelectorAll("[data-c]"),function(e){e.onclick=function(){var c=this.dataset.c;S.pop=false;var selected=S.sel.slice();if(!S.exportFolder){chooseExport(function(){convertSelection(c,selected)})}else convertSelection(c,selected);renderRight()}})}
 function renderBot(){var d=S.dev,el=$("bot"),n=S.sel.length;
-var dv=d==0?'<span class="dot" style="background:var(--t3)"></span>No reader connected':d==1?'<span class="dot" style="background:var(--ok)"></span>Kobo Libra 2 · E:\\ · 12.4 GB free':'<span class="dot" style="background:var(--wn)"></span>2 readers found · choose one';
+var r=readerSelected===null?null:readers[readerSelected];
+var dot='<span class="dot" style="background:var(--'+(d==0?'t3':r?'ok':'wn')+')"></span>';
+var name=d==0?'No reader connected':r?r.name:'2 readers found · choose one';
+var dv=d==2?'<button class="reader-selector" id="reader-selector" aria-label="'+name+' · choose reader" aria-haspopup="menu" aria-expanded="'+readerOpen+'" title="Choose reader">'+dot+'<span class="reader-name">'+name+'</span><svg class="reader-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>':'<span>'+dot+name+'</span>';
+var mount=r&&d?'<span class="reader-mount">· '+r.path+' · '+(deviceDemo=="unknown"?'free space unknown':readerSelected==1?'6.2 GB free':'12.4 GB free')+'</span>':'';
 var cp=S.jobs.filter(function(j){return j.copy&&j.s!="done"}),run=cp.filter(function(j){return j.s=="run"})[0];
-el.innerHTML='<span id="dv" style="cursor:pointer" title="Mockup only: click to cycle states">'+dv+'</span><span class="sp"></span>'+(run?'<span style="color:var(--t2)">'+run.p+'%'+(cp.length>1?' · '+(cp.length-1)+' queued':'')+'</span><span style="width:110px"><span class="pg" style="display:block"><i style="width:'+run.p+'%"></i></span></span><button id="jx">Cancel</button>':'')+(d==1?'<button class="pri" id="snd"'+(n?'':' style="opacity:.45"')+'>'+(n>1?'Send '+n+' to reader':'Send to reader')+'</button>':d==2?'<button id="snd">Choose reader…</button>':'<span style="color:var(--t3)">Connect a reader to send books</span>');
-$("dv").onclick=function(){S.dev=(S.dev+1)%3;renderBot()};
-if($("snd")&&d==1)$("snd").onclick=function(){S.sel.forEach(function(i){add("Sending “"+B[i].t.slice(0,18)+"…”",1)})};
-if($("jx"))$("jx").onclick=function(){S.jobs=S.jobs.filter(function(j){return !(j.s=="run"&&j.copy)});render()}}
-function add(t,c){S.jobs.push({id:++JID,t:t,s:"wait",p:0,copy:c,m:"Done"});renderSide();renderBot();if(S.scr=="jobs")renderBd()}
-function renderTop(){$("tg-s").className="ic"+(S.side?" on":"");$("tg-r").className="ic"+(S.scr!="home"?" off":S.rp?" on":"")}
+el.innerHTML=dv+mount+(d==1?'<button class="ic" id="manual-shortcut" title="Select folder manually…" aria-label="Select folder manually…"><i class="ti ti-folder" aria-hidden="true"></i></button>':'')+'<span class="sp"></span>'+(run?'<span class="transfer-state" style="color:var(--t2)">'+(run.stage=="Copying"?run.p+'%':run.stage)+(cp.length>1?' · '+(cp.length-1)+' queued':'')+'</span>'+(run.stage=="Copying"?'<span style="width:64px;flex:none"><span class="pg" style="display:block"><i style="width:'+run.p+'%"></i></span></span>':'')+'<button id="jx">Cancel</button>':'')+(r&&d?'<button class="pri" id="snd"'+(n&&!r.ro&&S.scr!="setup"?'':' disabled')+'>'+(n>1?'Send '+n+' to reader':'Send to reader')+'</button>':d==2?'<span style="color:var(--t3)">Choose a reader to send books</span>':'<button id="manual-shortcut" style="border:none;color:var(--t3)">Select folder manually…</button>');
+var diagnostic=deviceDemo=="failed"?"Could not enumerate mounted readers. Waiting for the next poll.":deviceDemo=="warning"?"Could not inspect G:\\; other readers remain available.":r&&r.ro?"Reader is read-only":"";
+if(diagnostic){var warning=document.createElement("span");warning.className="reader-warning";warning.title=diagnostic;warning.textContent=diagnostic;el.insertBefore(warning,el.querySelector(".sp"))}
+if($("reader-selector"))$("reader-selector").onclick=function(){readerOpen=!readerOpen;manualOpen=false;renderBot()};
+if($("manual-shortcut"))$("manual-shortcut").onclick=function(){readerOpen=!readerOpen;manualOpen=true;renderBot()};
+if($("snd"))$("snd").onclick=function(){sendBooks(S.sel)};
+if($("jx"))$("jx").onclick=function(){cancelJob(run.id)};renderReaderPopover()}
+function add(t,c,reader){S.jobs.push({id:++JID,t:t,s:"wait",p:0,copy:c,m:"Done",stage:"Preparing…",ticks:0,prefer:S.pk,reader:reader?{name:reader.name,path:reader.path}:null,outcome:$("send-outcome").value});renderSide();renderBot();if(S.scr=="jobs")renderBd()}
+function applyBlur(){var a=S.op/100,r=$("app");r.style.setProperty("--bg","rgba(14,14,16,"+a+")");r.style.setProperty("--pn","rgba(20,21,24,"+a+")");r.style.backdropFilter=(S.bl&&S.op<100)?"blur(24px)":"none"}
+function applyAppearance(){
+$("app").style.setProperty("--reading-size",S.textSize+"px");
+$("app").style.setProperty("--cover-size",S.coverSize+"px");
+$("app").style.setProperty("--details-width",S.detailsWidth+"px");
+$("detail-resizer").style.display=$("rp").style.display=="none"?"none":"block";
+}
+var grip=$("detail-resizer");
+grip.onpointerdown=function(event){grip.setPointerCapture(event.pointerId);grip.classList.add("dragging")};
+grip.onpointermove=function(event){if(!grip.hasPointerCapture(event.pointerId))return;
+var bounds=$("app").getBoundingClientRect();var available=bounds.width-(S.side?148:0)-200;
+S.detailsWidth=Math.max(240,Math.min(480,available,bounds.right-event.clientX));applyAppearance()};
+grip.onpointerup=function(event){grip.releasePointerCapture(event.pointerId);grip.classList.remove("dragging")};
+grip.onkeydown=function(event){if(event.key=="ArrowLeft"||event.key=="ArrowRight"){event.preventDefault();S.detailsWidth=Math.max(240,Math.min(480,S.detailsWidth+(event.key=="ArrowLeft"?16:-16)));applyAppearance()}};
+new MutationObserver(applyAppearance).observe($("rp"),{attributes:true,attributeFilter:["style"]});
+applyAppearance();applyBlur();
+function renderTop(){$("tg-s").className="ic"+(S.scr=="setup"?" off":S.side?" on":"");$("tg-r").className="ic"+(S.scr!="home"||["running","failed","cancelled"].indexOf(scanState)>-1?" off":S.rp?" on":"")}
 setInterval(function(){var r=S.jobs.filter(function(j){return j.s=="run"})[0];if(!r){var w=S.jobs.filter(function(j){return j.s=="wait"})[0];if(w){w.s="run";renderSide();renderBot();if(S.scr=="jobs")renderBd()}return}
-r.p+=r.copy?4:5;if(r.p>=100){r.s="done";r.m=r.copy?"Sent to Kobo Libra 2":"Converted · not added to library";renderSide()}renderBot();if(S.scr=="jobs")renderBd()},110);
-function render(){renderSide();renderHd();renderBd();renderRight();renderBot();renderTop()}
+if(r.scan)return;
+if(r.copy){r.ticks++;r.stage=r.ticks<12?"Preparing…":r.prefer&&r.ticks<24?"Converting…":"Copying";if(r.stage=="Copying")r.p+=4;
+var path=r.reader.path+r.t+".epub";
+if(r.outcome!="success"&&r.p>=(r.outcome=="removed"?40:4)){r.s="done";r.failed=true;r.m=r.outcome=="conflict"?"Destination already exists: "+path+". Existing file was not overwritten.":r.outcome=="permission"?"Permission denied: "+path+". Check reader permissions and try again.":"Transfer interrupted: reader is unavailable. A partial file may remain at "+path+".part. Reconnect the reader and check this file before retrying.";toast(r.m,"error")}
+}else r.p+=5;
+if(r.s!="done"&&r.p>=100){r.s="done";r.m=r.copy?"Sent to "+r.reader.name:"Converted · not added to library";toast(r.m,"success")}
+renderSide();renderBot();if(S.scr=="jobs")renderBd()},110);
+function render(){renderSide();renderHd();renderBd();renderRight();renderBot();renderTop();
+if(S.scr=="home"){
+var bar=$("hd").querySelector(".bar1");
+var refresh=document.createElement("button");refresh.className="ic";refresh.title="Rescan";refresh.setAttribute("aria-label","Rescan");refresh.innerHTML='<i class="ti ti-refresh" aria-hidden="true"></i>';refresh.disabled=scanState=="running";refresh.onclick=function(){item7State="books";startScan()};bar.insertBefore(refresh,bar.querySelector(".seg"));
+var warning=document.createElement("button");warning.textContent="1 warning";warning.onclick=function(){item7State=item7State=="warnings"?"books":"warnings";render()};if(item7State!="empty")bar.insertBefore(warning,refresh);
+if(item7State=="empty"){$("cnt").textContent="0 books";$("bd").innerHTML='<div class="scan-state"><span>No books found</span><span style="font-size:12px">Rescan this library or choose another folder.</span><div><button id="empty-rescan">Rescan</button> <button id="empty-change">Change library</button></div></div>';$("empty-rescan").onclick=function(){item7State="books";startScan()};$("empty-change").onclick=function(){enterSetup("first")}}
+if(item7State=="warnings"){$("bd").innerHTML='<div style="padding:12px;overflow:auto;height:100%"><div style="display:flex;justify-content:space-between"><b>Scan warnings</b><button id="close-warnings">Close</button></div><p style="color:var(--t2);user-select:text">Could not read a book folder. Other books remain available.</p></div>';$("close-warnings").onclick=function(){item7State="books";render()}}
+}}
 $("tg-s").onclick=function(){S.side=!S.side;render()};
 $("tg-r").onclick=function(){if(S.scr=="home"){S.rp=!S.rp;renderRight();renderTop()}};
+$("scan-demo").onchange=function(){startScan()};
+$("setup-demo").onchange=function(){if(this.value=="home"){clearTimeout(scanTimer);if(scanJob)scanJob.s="done";scanState="idle";S.scr="home";S.sel=[0];render()}else enterSetup(this.value)};
 render();
 
 })();
