@@ -73,3 +73,15 @@ See [UI_SETTINGS.md](../../../docs/UI_SETTINGS.md) for verification and limitati
 `blur_probe`, the real application view in a transparent window with the acrylic
 backdrop, over a striped full-screen window, and saves an OS-level capture. iced's
 own screenshots cannot include the backdrop. Results: [UI_BLUR.md](../../../docs/UI_BLUR.md).
+
+## Item №15 performance and scaling probes
+
+`cargo run --release -p rulibre-ui --example perf_probe --locked` builds a 20,000-folder
+library in a temporary directory, scans it through the real services and prints first
+frame, scan, scan-result-to-redraw, search round trip per keystroke, keyboard cursor cost,
+range selection and list/grid scroll redraw intervals. Configuration is temporary.
+
+`cargo run -p rulibre-ui --example scaling_probe --locked` captures the shell at iced scale
+factors 1.0, 1.5 and 2.0 (emulation of 100/150/200% OS scale; the layout area stays 760×520)
+with generated JPEG covers, into `docs/ui-item-15`. Results and limits:
+[UI_CHECKLIST.md](../../../docs/UI_CHECKLIST.md).

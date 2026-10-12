@@ -1,0 +1,196 @@
+# Rulibre iced UI
+
+`crates/rulibre-ui` is the native desktop client built with [iced](https://iced.rs) 0.14. It is a
+thin layer over `rulibre-core`: the core scans the library, reads metadata, finds covers, detects
+readers, converts and copies. The UI renders state and turns clicks and keys into messages.
+
+The Calibre library is read-only ([LIBRARY_READ_ONLY.md](LIBRARY_READ_ONLY.md)). No UI action
+writes into the library folder or `metadata.db`. Converted books go to a separate export folder.
+
+Design reference: [design/mockup.html](design/mockup.html). Plan and decisions: [../UI_PLAN.md](../UI_PLAN.md).
+
+## Run
+
+```
+cargo run -p rulibre-ui --release
+```
+
+The first start shows a screen asking for the Calibre library folder (the folder with `metadata.db`).
+The choice is saved to the shared core `config.toml`; UI preferences go to `ui.toml` next to it.
+
+| Variable | Effect |
+|---|---|
+| `RUST_LOG` | Log level. The default is `warn`; the UI logs what it does not show (cover decoding, reader polling, unreadable metadata, scan warnings). |
+| `RULIBRE_UI_DATA_DIR` | Keeps `config.toml`, `ui.toml` and the cover cache in one folder instead of the user profile. For fixtures and manual runs. |
+
+A 240-book fixture for manual runs: `python scripts/make-ui-fixture.py <folder>` (needs Pillow).
+The manual checklist is [UI_CHECKLIST.md](UI_CHECKLIST.md).
+
+External tools are only needed for conversion: `ebook-convert` (Calibre) and `kepubify`. Browsing,
+searching and sending an existing compatible file need neither. See [CONVERSION.md](CONVERSION.md).
+
+## Architecture
+
+```
+iced runtime ── Message ──▶ app::update(&mut State, Message, &dyn Services) ──▶ Task<Message>
+      ▲                                  │                                         │
+      │                                  ▼                                         │
+   app::view(&State)              Services trait ──▶ rulibre-core            results come back
+   (pure rendering)               (scan, metadata, covers, devices,           as Messages
+                                   jobs, settings IO, folder picker)
+```
+
+- **State and update** live in `app.rs`. `update` is a pure function over `State`; every decision is
+  there and nothing else changes state. Side effects are returned as `iced::Task`s that eventually
+  produce another `Message`.
+- **Views** (`widgets/`) only read `State` and build elements. They never call the core.
+- **Services** (`services/`) are the only code that touches the core, the filesystem and the folder
+  picker. `trait Services` has a real implementation (`RealServices`) and test doubles.
+- **Stale replies** are dropped by generation guards (`response_guard.rs`, plus counters in `State`
+  for the search, scan, folder pickers and reader validation), so a slow answer for book A never
+  overwrites the view of book B.
+
+### Module map
+
+| Module | Role |
+|---|---|
+| `main.rs` | Builds the iced application, injects `RealServices`, window settings, shutdown after the loop. |
+| `app.rs` | `State`, `Screen`, `Message`, `update`, `view`, `subscription`, window style. The largest file; its unit tests drive `update` with a fake `Services`. |
+| `catalog.rs` | View-model of the scanned books: sort keys, formats and authors facets, visible-slice maths. |
+| `selection.rs` | Selection by `BookId` (click, Ctrl/Cmd, Shift ranges, keyboard cursor, select all). |
+| `keymap.rs` | Pure table: key + modifiers + context → command. |
+| `settings.rs` | `UiSettings` and `ui.toml` (view mode, pane visibility and width, text/cover size, opacity, blur, KEPUB preference, export folder). |
+| `theme.rs`, `icons.rs` | Palette tokens, styles, embedded Lucide SVG icons. All colour literals live in `theme.rs`. |
+| `blur.rs` | Window opacity and Windows acrylic: environment setup, alpha mapping, apply/clear state machine. |
+| `response_guard.rs` | Request generation + `BookId` guard for metadata and covers. |
+| `services/mod.rs` | `Services` trait, `RealServices`, config and library IO, validation, backends, conversion. |
+| `services/jobs.rs` | Job coordinator in front of the core `JobExecutor` (FIFO queue, retry on full/conflict, cancel, progress mapping). |
+| `services/devices.rs` | Reader watcher subscription, manual readers, free space, session selection. |
+| `services/covers.rs` | Cover pipeline: find → decode → thumbnail → disk cache → bounded in-memory LRU. |
+| `widgets/shell.rs` | Toolbar, sidebar, details/centre/bottom layout. |
+| `widgets/book_list.rs`, `book_grid.rs` | Virtualised list and cover grid (visible slice plus spacers). |
+| `widgets/details.rs` | Metadata, multi-selection summary, Convert menu, export-folder prompt. |
+| `widgets/device_bar.rs` | Always-visible reader bar, picker, Send, progress. |
+| `widgets/jobs.rs`, `settings.rs`, `toasts.rs` | Jobs screen, Settings screen, notification stack. |
+| `screens/` | Reserved; screens are currently arms of `app::view`. |
+
+Per-area notes with measurements and captures: [UI_SETUP.md](UI_SETUP.md), [UI_SHELL.md](UI_SHELL.md),
+[UI_CATALOG.md](UI_CATALOG.md), [UI_NAVIGATION.md](UI_NAVIGATION.md), [UI_COVERS.md](UI_COVERS.md),
+[UI_DEVICES.md](UI_DEVICES.md), [UI_JOBS.md](UI_JOBS.md), [UI_SETTINGS.md](UI_SETTINGS.md),
+[UI_DETAILS.md](UI_DETAILS.md), [UI_APPEARANCE.md](UI_APPEARANCE.md), [UI_BLUR.md](UI_BLUR.md),
+[UI_CHECKLIST.md](UI_CHECKLIST.md) (keyboard, states, scaling, performance), [UI_SPIKE.md](UI_SPIKE.md).
+
+### Message flow: sending books
+
+1. The user clicks a book. `BookClicked` updates `Selection` using the modifiers last reported by the
+   keyboard subscription (iced mouse events do not carry them). The details pane opens and
+   `LoadMetadata` / `LoadCover` tasks start.
+2. The user presses `T` or clicks "Send to reader". `keymap` resolves the key to `Command::Send`
+   (or the button emits `Message::Send`); `update` checks the reader and selection.
+3. `update` calls `services.enqueue(title, JobRequest::Send { … })` once per selected book, in
+   selection order. The coordinator tries `JobExecutor::submit`; on `Full` or `Conflict` the request
+   waits in the UI queue and is retried when a job finishes.
+4. While jobs are unfinished, a 100 ms `Message::Clock` subscription polls `services.poll()`. Updates
+   become `JobView`s (state, stage, copied bytes); the bottom bar and Jobs screen render them.
+5. Results become toasts ("Sent to …", or a path-aware error). Cancel calls `services.cancel(id)`.
+6. On close, the app cancels jobs, joins the executor and device watcher, then exits.
+
+## How to add a screen
+
+1. Add a variant to `Screen` in `app.rs` and a nav entry in `widgets/shell.rs` (`nav(...)`). Decide
+   whether the details pane applies (`Layout::for_state` only enables it on Home) and whether
+   selection should be cleared on entry (`Message::Navigate`).
+2. Add the `Message` variants the screen needs and their arms in `update`. Keep `update` free of IO:
+   put new IO behind a `Services` method with a default or fake in tests.
+3. Write the view in `widgets/<screen>.rs` as `pub fn view(state: &State) -> Element<'_, Message>` and
+   add its arm to `app::view`. Use `theme::font(state, size)` for text so the text-size setting applies,
+   and tokens from `theme::DARK`, never colour literals.
+4. If the screen has its own keys, extend `keymap::Pane`/`Command` and the table tests.
+5. Every state needs text written as an invitation with a next action (sentence case, no
+   "successfully"). Add it to the states table in [UI_CHECKLIST.md](UI_CHECKLIST.md).
+6. Tests (below): an `update` test, and a simulator test for the click path.
+
+## Tests
+
+| Layer | Where | What it covers |
+|---|---|---|
+| Pure logic | unit tests in `keymap.rs`, `selection.rs`, `catalog.rs`, `settings.rs`, `blur.rs`, `services/*` | Key table, selection semantics, sorting, settings round trip, coordinator queue. |
+| `update` with a fake | `app.rs` `mod tests` | Message sequences, stale replies, rollback on failed saves. |
+| Headless UI | `tests/ui_simulator.rs` | The real `view` driven by `iced_test`'s simulator: sidebar click changes screen, click / Ctrl+click / Shift+click selection, details toggle, Send queues one job per book and the files reach the fixture reader. |
+| Real core flows | `tests/readiness_flow.rs`, `send_jobs.rs`, `settings_flow.rs`, `conversion_flow.rs` | Saved config → real scan → select → send through the real coordinator and executor; resend conflict; cancel of a running and a waiting job; reader disappearing mid-copy; settings persistence and library switch; opt-in real `ebook-convert`. Library snapshots are compared byte for byte afterwards. |
+
+**`iced_test` 0.14 works** (evaluated for item 16). `iced_test::simulator(view)` renders the real
+view headlessly and can find widgets by text and click them. Notes from using it:
+
+- Tests set `ICED_TEST_BACKEND=tiny-skia`, so the software renderer is used and no GPU is needed on CI.
+- The simulator does not run subscriptions. The app learns modifiers from `ModifiersChanged` through a
+  subscription, so tests feed that `Message` themselves before a Ctrl/Shift click. Keyboard shortcuts are
+  covered by the `keymap` table and `update` tests for the same reason.
+- Icon-only buttons have no text to select. The details toggle is clicked by pointing at its position
+  (`point_at` + `simulator::click()`); the `Point` selector would click the centre of the whole window.
+- Book rows only exist inside the visible slice, so tests set the viewport size in `State` first.
+- Only the real core is used where the plan calls for it; reader volumes are injected through
+  `JobExecutor::with_volume_source`. No test touches a physical reader.
+
+Run everything: `pwsh scripts/check-ui.ps1` (format, locked build, Clippy with warnings denied, all targets
+and tests). On Windows, if the compiler reports `os error 1455` (paging file too small) rerun with
+`CARGO_BUILD_JOBS=2`.
+
+## Continuous integration
+
+`.github/workflows/ui.yml` runs `scripts/check-ui.ps1` on Windows, Ubuntu 24.04 and macOS for every push
+and pull request, and uploads the log of each system as an artifact (`ui-<os>`). The Linux job installs
+Wayland/X11, xkbcommon and Vulkan packages first. `scripts/check-readiness.ps1 -Ui` runs the same script
+as part of the full local readiness run. The older `readiness.yml` stays about the core, the TUI and the
+Tauri client (removed in item 17).
+
+## Limitations
+
+Known from items 1–16. Nothing here is hidden behind "works on my machine"; where something was not run it says so.
+
+**Hardware and platforms**
+- No physical Kobo or Kindle was used. Readers in every test are fixture folders classified by the core
+  from injected volume snapshots; USB removal is simulated by a failing volume feed. See
+  [READINESS.md](READINESS.md) for the procedure to verify a real reader.
+- MTP and network storage are unsupported.
+- Windows 11 is the only system the UI was run on by hand. Windows 10, Linux and macOS are built, linted and
+  tested in CI only; nobody has looked at the window there.
+- Free-space and reader detection use OS volume enumeration; FAT/exFAT behaviour is verified on fixtures only.
+
+**Look and feel**
+- Dark theme only; there is no light theme (the palette is a token struct, so one can be added).
+- Window blur is Windows-only and needs two small patches to iced in `vendor/` that must be re-applied on every
+  iced upgrade ([../vendor/README.md](../vendor/README.md), [UI_BLUR.md](UI_BLUR.md)). Where it is refused the
+  window stays opaque with one toast. macOS vibrancy is not wired; Linux is opaque. Not verified: Windows 10,
+  other GPUs and drivers, flicker while resizing, battery use.
+- With blur available the toolbar is the title bar. Drag, maximise, minimise, close and edge resizing are wired
+  to iced window operations but were not exercised with real mouse input; Windows 11 snap layouts on the
+  maximise button are lost.
+- Scaling at 150 % and 200 % was emulated with iced's scale factor, not by changing the OS DPI. Cover thumbnails
+  are a fixed 192×264, so covers are visibly soft above 100 %. A sharper cache costs memory and unbounded disk;
+  this is an open decision.
+
+**Interaction**
+- iced 0.14 buttons cannot take keyboard focus, so Tab moves between text fields only. The keyboard cursor
+  in the list and grid has its own outline.
+- The Convert menu is inline in the details pane, so it closes with Esc or a new selection, not with an outside click.
+- Multi-select is by keyboard modifiers only (no checkboxes); no drag and drop; no metadata editing.
+- Physical key presses, tooltips, the native folder picker and "Open folder" were not exercised by hand.
+  The affected rows of [UI_CHECKLIST.md](UI_CHECKLIST.md) are marked "Not run".
+
+**Data**
+- Sorting is Unicode-lowercase code-point order, not locale collation. Search matches substrings of title and
+  author and does not fold diacritics.
+- Series, tag and language filters are not available (the data is in OPF but not in the scan snapshot).
+- The expanded Authors list in the sidebar is not virtualised.
+- Test libraries are synthetic; `metadata.db` in fixtures is only the marker the validation looks for.
+  No personal Calibre library was used.
+- Cover pipeline numbers (5,000 catalog entries) were measured with six distinct JPEGs repeated, not 5,000 different books.
+- Performance numbers are Windows 11, release build, 180 Hz display, redraw intervals rather than GPU presentation.
+
+**Conversion**
+- Needs `ebook-convert` and/or `kepubify`. A real TXT → EPUB run was recorded with Calibre 8.16.2 on one machine;
+  `kepubify` was not available and its route has no real run.
+- Conversion shows a stage, never a percentage. Sends that need preparation report "Preparing" for the whole preparation.
+- Converted files go to the export folder and are not added to the library.
+- Several simultaneous destination readers were not verified.
