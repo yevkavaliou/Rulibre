@@ -1,0 +1,39 @@
+   Compiling rulibre-core v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-core)
+   Compiling rulibre v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.15s
+     Running unittests src\main.rs (target\debug\deps\rulibre-4d06ff03dec6d058.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\rulibre_core-26f43f2e136efb4b.exe)
+
+running 3 tests
+test converter::tests::probes_missing_and_failed_backends_without_processes ... ok
+test converter::tests::converter_failure_includes_fake_stderr ... ok
+test converter::tests::conversion_uses_fake_process_and_preserves_path_arguments ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src\bin\scan_metadata.rs (target\debug\deps\scan_metadata-6c2faa439ebc758a.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\baseline.rs (target\debug\deps\baseline-208933fdffd48846.exe)
+
+running 3 tests
+test temporary_fixture_is_removed_on_drop ... ok
+test scans_synthetic_library_and_reads_opf ... ok
+test copies_ready_files_to_synthetic_devices ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+   Doc-tests rulibre_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

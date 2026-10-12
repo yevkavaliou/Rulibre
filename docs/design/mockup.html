@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rulibre UI design reference</title>
+<!-- Design reference for the iced UI (see UI_PLAN.md). Interactive HTML mockup, not production code.
+     Icons come from the Tabler webfont CDN; the layout and behaviour are the specification. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root{--text-secondary:#666;--font-mono:ui-monospace,Consolas,monospace}
+body{margin:0;padding:24px;max-width:720px;margin-inline:auto;font-family:system-ui,sans-serif;background:#f4f4f2;color:#222}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-color-scheme:dark){body{background:#101114;color:#ddd}:root{--text-secondary:#999}}
+</style></head><body>
+<h2 class="sr-only">Revised Rulibre mockup with separate screens for Home, Search, Jobs and Settings, a Library dropdown for formats and authors, keyboard multi-select with a counter in the details pane, and a fixed bottom bar for the connected reader.</h2>
+<style>
+.wp{background:linear-gradient(135deg,#3d2c78 0%,#1f6f86 50%,#8a3f58 100%);border-radius:12px;padding:14px}
+.rl{--bg:rgba(23,24,27,1);--pn:rgba(30,32,36,1);--ln:rgba(255,255,255,.09);--hv:rgba(255,255,255,.07);--sel:rgba(91,155,255,.22);--tx:#e8e9ec;--t2:#a0a3ad;--t3:#707380;--ac:#5b9bff;--ok:#4cc38a;--wn:#e5a93d;background:var(--bg);color:var(--tx);border:0.5px solid var(--ln);border-radius:10px;overflow:hidden;font-size:13px;line-height:1.4;height:530px;display:flex;flex-direction:column;position:relative;user-select:none}
+.rl.wb{--bg:rgba(20,21,26,.55);--pn:rgba(20,21,26,.35);backdrop-filter:blur(22px)}
+.rl *{box-sizing:border-box}
+.rl button{background:transparent;color:var(--tx);border:0.5px solid var(--ln);border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer;height:auto}
+.rl button:hover{background:var(--hv)}
+.rl button.ic{border:none;padding:4px 6px;font-size:16px;color:var(--t2)}.rl button.ic.on{color:var(--ac)}.rl button.ic.off{opacity:.3;pointer-events:none}
+.rl .pri{background:var(--ac);border-color:var(--ac);color:#fff}.rl .pri:hover{background:var(--ac);opacity:.9}
+.rl .top{display:flex;gap:8px;align-items:center;padding:4px 8px;height:34px;font-size:12px;color:var(--t3);flex:none}
+.rl .top .sp{flex:1}
+.rl .main{flex:1;display:flex;min-height:0}
+.rl .side{width:148px;padding:4px 6px;border-right:0.5px solid var(--ln);display:flex;flex-direction:column;gap:1px;overflow:auto;flex:none}
+.rl .nv{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;color:var(--t2);white-space:nowrap;min-height:30px}
+.rl .nv:hover{background:var(--hv)}.rl .nv.on{background:var(--hv);color:var(--tx)}
+.rl .nv .n{margin-left:auto;font-size:11px;color:var(--t3)}.rl .nv .bg{margin-left:auto;font-size:10px;background:var(--ac);color:#fff;border-radius:8px;padding:0 6px}
+.rl .nv.s1{padding-left:26px}.rl .nv.s2{padding-left:38px;min-height:26px;font-size:12px}
+.rl .nv .l{overflow:hidden;text-overflow:ellipsis}
+.rl .ctr{flex:1;min-width:0;display:flex;flex-direction:column}
+.rl .bar1{display:flex;align-items:center;padding:2px 12px 8px;gap:8px;min-height:36px}
+.rl .bar1 h4{margin:0;font-size:16px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl .sbar{flex:1;display:flex;align-items:center;gap:8px;background:var(--hv);border-radius:18px;padding:0 14px;height:34px}
+.rl .sbar input{all:unset;flex:1;font-size:14px;color:var(--tx);user-select:text}
+.rl .bd{flex:1;overflow:hidden}
+.rl .row{display:grid;grid-template-columns:26px minmax(0,1.5fr) minmax(0,1fr) 84px;gap:8px;padding:0 12px;height:36px;align-items:center;cursor:pointer}
+.rl .row:hover{background:var(--hv)}.rl .row.on{background:var(--sel)}
+.rl .row>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl .th{width:22px;height:30px;border-radius:3px}
+.rl .au{color:var(--t2)}
+.rl .tag{font-size:10px;font-family:var(--font-mono);padding:1px 5px;border-radius:3px;background:var(--hv);color:var(--t2);margin-right:3px}
+.rl .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px;padding:6px 12px}
+.rl .cd{cursor:pointer;min-width:0}.rl .cd .cv{aspect-ratio:2/3;border-radius:6px;display:flex;align-items:flex-end;padding:6px;font-size:10px;line-height:1.2;color:#fff;overflow:hidden;border:2px solid transparent}
+.rl .cd.on .cv{border-color:var(--ac)}
+.rl .cd b{display:block;font-weight:500;font-size:12px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl .cd small{color:var(--t3);font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl .seg{display:flex;border:0.5px solid var(--ln);border-radius:6px;overflow:hidden}
+.rl .seg button{border:none;border-radius:0;padding:3px 8px;color:var(--t2)}.rl .seg button.on{background:var(--hv);color:var(--tx)}
+.rl .rp{width:226px;border-left:0.5px solid var(--ln);background:var(--pn);display:flex;flex-direction:column;position:relative;overflow:hidden;flex:none}
+.rl .amb{position:absolute;top:-40px;left:20px;width:190px;height:190px;border-radius:50%;filter:blur(46px);opacity:.5;pointer-events:none}
+.rl .pb{padding:14px 12px 12px;position:relative;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+.rl .cover{height:112px;width:76px;border-radius:5px;display:flex;align-items:flex-end;padding:5px;font-size:9px;color:#fff;line-height:1.2;flex:none}
+.rl .pb h3{margin:0;font-size:14px;font-weight:500;line-height:1.3}
+.rl .big{font-size:26px;font-weight:500;margin-top:8px}
+.rl .meta{display:grid;grid-template-columns:58px 1fr;gap:2px 8px;font-size:12px}.rl .meta b{font-weight:400;color:var(--t3)}
+.rl .desc{color:var(--t2);font-size:12px;line-height:1.5;overflow:hidden;max-height:60px}
+.rl .sl{font-size:12px;color:var(--t2);padding:3px 0;border-bottom:0.5px solid var(--ln);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl .jt{font-size:10px;letter-spacing:.06em;color:var(--t3);padding:10px 12px 4px}
+.rl .jr{display:flex;align-items:center;gap:12px;padding:8px 12px;border-bottom:0.5px solid var(--ln)}
+.rl .jr>div:first-child{flex:1;min-width:0}.rl .jr small{display:block;color:var(--t3);font-size:11px}
+.rl .pg{height:3px;background:var(--hv);border-radius:2px;margin-top:4px}.rl .pg i{display:block;height:100%;background:var(--ac);border-radius:2px}
+.rl .bot{height:46px;border-top:0.5px solid var(--ln);display:flex;align-items:center;gap:12px;padding:0 12px;font-size:12px;flex:none}
+.rl .bot .sp{flex:1}
+.rl .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+.rl .pop{position:absolute;bottom:42px;left:12px;right:12px;background:var(--bg);border:0.5px solid var(--ln);border-radius:8px;padding:4px;z-index:5}
+.rl .pop div{padding:6px 8px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;justify-content:space-between}.rl .pop div:hover{background:var(--hv)}.rl .pop small{color:var(--t3)}
+.rl .set label{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:10px 16px;border-bottom:0.5px solid var(--ln)}
+.rl .set small{display:block;color:var(--t3);font-size:11px}
+.rl .emp{padding:34px 20px;text-align:center;color:var(--t3)}
+</style>
+
+<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">Try it: Ctrl+click or Shift+click selects several books. Open Search, Jobs and Settings from the sidebar. Click the reader status at the bottom to cycle device states.</div>
+
+<div class="wp">
+<div class="rl" id="app">
+  <div class="top"><button class="ic" id="tg-s" aria-label="Toggle sidebar"><i class="ti ti-layout-sidebar" aria-hidden="true"></i></button><span>Rulibre</span><span class="sp"></span><button class="ic" id="tg-r" aria-label="Toggle details pane"><i class="ti ti-layout-sidebar-right" aria-hidden="true"></i></button></div>
+  <div class="main">
+    <div class="side" id="side"></div>
+    <div class="ctr"><div id="hd"></div><div class="bd" id="bd"></div></div>
+    <div class="rp" id="rp"><div class="amb" id="amb"></div><div class="pb" id="pb"></div></div>
+  </div>
+  <div class="bot" id="bot"></div>
+</div>
+</div>
+
+<script>
+(function(){
+var B=[
+{t:"Математика. Утрата определённости",a:"Морис Клайн",f:["MOBI"],h:12,d:"Книга известного американского математика о развитии математической науки от античных времён.",p:"Мир",y:"1984"},
+{t:"Математика. Поиск истины",a:"Морис Клайн",f:["MOBI"],h:30,d:"Продолжение: как математика связана с реальным миром и может ли она претендовать на истину.",p:"Мир",y:"1988"},
+{t:"Удовольствие от x",a:"Стивен Строгац",f:["EPUB","PDF"],h:200,d:"Увлекательный тур по миру математики для тех, кто думал, что она не для него.",p:"МИФ",y:"2014"},
+{t:"Cyberiada",a:"Stanisław Lem",f:["EPUB","KEPUB"],h:150,d:"Fables for the cybernetic age, featuring Trurl and Klapaucius.",p:"",y:"1965"},
+{t:"Zima Blue",a:"Alastair Reynolds",f:["EPUB"],h:225,d:"A short story about an artist whose work is a single shade of blue.",p:"Hachette UK",y:"2009"},
+{t:"Harry Potter i kamień filozoficzny",a:"J. K. Rowling",f:["EPUB","MOBI"],h:280,d:"Pierwszy tom przygód młodego czarodzieja.",p:"Media Rodzina",y:"2016"},
+{t:"Quick Start Guide",a:"John Schember",f:["EPUB","AZW3"],h:340,d:"A guide to getting started.",p:"",y:""}];
+var S={scr:"home",sel:[0],anchor:0,grid:true,side:true,rp:true,dev:1,q:"",filt:"all",jobs:[],pop:false,lib:true,fmt:false,aut:false,wb:false,am:true,pk:false};
+var JID=0;
+function $(i){return document.getElementById(i)}
+function col(h){return "hsl("+h+",42%,34%)"}
+function vis(){var q=S.q.toLowerCase();return B.map(function(b,i){return i}).filter(function(i){var b=B[i];if(S.scr=="search")return q&&(b.t+b.a).toLowerCase().indexOf(q)>-1;return S.filt=="all"||b.f.indexOf(S.filt)>-1||b.a==S.filt})}
+function chev(o){return '<i class="ti ti-chevron-'+(o?'down':'right')+' n" aria-hidden="true"></i>'}
+function nact(){return S.jobs.filter(function(j){return j.s!="done"}).length}
+function renderSide(){var s=$("side");s.style.display=S.side?"flex":"none";if(!S.side)return;var au=[],f={},sc=S.scr,h="";
+B.forEach(function(b){if(au.indexOf(b.a)<0)au.push(b.a);b.f.forEach(function(x){f[x]=(f[x]||0)+1})});
+function nv(id,ic,lb,on,ex){return '<div class="nv'+(on?' on':'')+'" id="'+id+'"><i class="ti ti-'+ic+'" aria-hidden="true"></i><span class="l">'+lb+'</span>'+(ex||'')+'</div>'}
+h+=nv("n-h","home",'Home',sc=="home"&&S.filt=="all");
+h+=nv("n-s","search",'Search',sc=="search");
+h+=nv("n-l","books",'Library',false,chev(S.lib));
+if(S.lib){h+='<div class="nv s1" id="n-f"><span class="l">Formats</span>'+chev(S.fmt)+'</div>';
+if(S.fmt)Object.keys(f).forEach(function(k){h+='<div class="nv s2'+(sc=="home"&&S.filt==k?' on':'')+'" data-f="'+k+'"><span class="l">'+k+'</span><span class="n">'+f[k]+'</span></div>'});
+h+='<div class="nv s1" id="n-a"><span class="l">Authors</span>'+chev(S.aut)+'</div>';
+if(S.aut)au.forEach(function(k){h+='<div class="nv s2'+(sc=="home"&&S.filt==k?' on':'')+'" data-f="'+k+'"><span class="l">'+k+'</span></div>'})}
+h+=nv("n-j","list-check",'Jobs',sc=="jobs",nact()?'<span class="bg">'+nact()+'</span>':'');
+h+=nv("n-g","settings",'Settings',sc=="settings");
+s.innerHTML=h;
+function go(id,sc2){$(id).onclick=function(){S.scr=sc2;if(sc2=="home")S.filt="all";S.pop=false;render()}}
+go("n-h","home");go("n-j","jobs");go("n-g","settings");
+$("n-s").onclick=function(){S.scr="search";S.pop=false;render();$("qi").focus()};
+$("n-l").onclick=function(){S.lib=!S.lib;renderSide()};
+if($("n-f"))$("n-f").onclick=function(){S.fmt=!S.fmt;renderSide()};
+if($("n-a"))$("n-a").onclick=function(){S.aut=!S.aut;renderSide()};
+Array.prototype.forEach.call(s.querySelectorAll("[data-f]"),function(e){e.onclick=function(){S.scr="home";S.filt=this.dataset.f;render()}})}
+function renderHd(){var sc=S.scr,h="";
+if(sc=="home")h='<div class="bar1"><h4 id="ttl"></h4><span id="cnt" style="color:var(--t3);font-size:12px"></span><div class="seg"><button id="v-l" aria-label="List"><i class="ti ti-list" aria-hidden="true"></i></button><button id="v-g" aria-label="Cover grid"><i class="ti ti-layout-grid" aria-hidden="true"></i></button></div></div>';
+else if(sc=="search")h='<div class="bar1"><div class="sbar"><i class="ti ti-search" style="color:var(--t3)" aria-hidden="true"></i><input id="qi" placeholder="Search by title, author or series" value="'+S.q+'"></div></div>';
+else if(sc=="jobs")h='<div class="bar1"><h4>Jobs</h4><button id="clr">Clear finished</button></div>';
+else h='<div class="bar1"><h4>Settings</h4></div>';
+$("hd").innerHTML=h;
+if(sc=="home"){$("v-l").onclick=function(){S.grid=false;renderBd()};$("v-g").onclick=function(){S.grid=true;renderBd()}}
+if(sc=="search")$("qi").oninput=function(){S.q=this.value;renderBd();renderRight()};
+if(sc=="jobs")$("clr").onclick=function(){S.jobs=S.jobs.filter(function(j){return j.s!="done"});render()}}
+function pick(i,e,v){if(e.shiftKey&&v.indexOf(S.anchor)>-1){var a=v.indexOf(S.anchor),b=v.indexOf(i);S.sel=v.slice(Math.min(a,b),Math.max(a,b)+1)}
+else if(e.ctrlKey||e.metaKey){var k=S.sel.indexOf(i);if(k>-1)S.sel.splice(k,1);else S.sel.push(i);S.anchor=i}
+else{S.sel=[i];S.anchor=i}
+S.rp=true;S.pop=false;renderBd();renderRight();renderBot();renderTop()}
+function renderBd(){var sc=S.scr,el=$("bd");
+if(sc=="settings"){el.innerHTML='<div class="set"><label><span>Window blur<small>OS Mica or Acrylic behind the window</small></span><input type="checkbox" id="wb"'+(S.wb?' checked':'')+'></label><label><span>Cover tint<small>Blurred cover colour behind the details pane</small></span><input type="checkbox" id="am"'+(S.am?' checked':'')+'></label><label><span>Prefer KEPUB for Kobo<small>Convert EPUB to KEPUB before sending</small></span><input type="checkbox" id="pk"'+(S.pk?' checked':'')+'></label><label><span>Library folder<small>D:\\Calibre Library</small></span><button>Change…</button></label></div>';
+$("wb").onchange=function(){S.wb=this.checked;$("app").classList.toggle("wb",S.wb)};$("am").onchange=function(){S.am=this.checked;renderRight()};$("pk").onchange=function(){S.pk=this.checked};return}
+if(sc=="jobs"){var r=S.jobs.filter(function(j){return j.s=="run"}),w=S.jobs.filter(function(j){return j.s=="wait"}),d=S.jobs.filter(function(j){return j.s=="done"}).slice().reverse(),h="";
+var it=function(j){return '<div class="jr"><div>'+j.t+'<small>'+(j.s=="run"?(j.copy?"Copying · "+j.p+"%":"Converting…"):j.s=="wait"?"Waiting":j.m)+'</small></div>'+(j.s=="run"?'<div style="width:110px"><div class="pg"><i style="width:'+(j.copy?j.p:35)+'%"></i></div></div><button data-x="'+j.id+'">Cancel</button>':j.s=="wait"?'<button data-x="'+j.id+'">Cancel</button>':'')+'</div>'};
+if(!S.jobs.length)h='<div class="emp">No jobs yet.<br>Send or convert a book to start one.</div>';
+else{if(r.length)h+='<div class="jt">RUNNING</div>'+r.map(it).join("");if(w.length)h+='<div class="jt">UP NEXT</div>'+w.map(it).join("");if(d.length)h+='<div class="jt">DONE</div>'+d.map(it).join("")}
+el.innerHTML=h;Array.prototype.forEach.call(el.querySelectorAll("[data-x]"),function(e){e.onclick=function(){var id=+this.dataset.x;S.jobs=S.jobs.filter(function(j){return j.id!=id});render()}});return}
+var v=vis();
+if(sc=="home"){$("ttl").textContent=S.filt=="all"?"Home":"Library · "+S.filt;$("cnt").textContent=v.length+" books";$("v-l").className=S.grid?"":"on";$("v-g").className=S.grid?"on":""}
+if(sc=="search"&&!S.q){el.innerHTML='<div class="emp">Type to search by title or author.</div>';return}
+if(!v.length){el.innerHTML='<div class="emp">No books match.</div>';return}
+var g=sc=="home"&&S.grid;
+if(g)el.innerHTML='<div class="grid">'+v.map(function(i){var b=B[i];return '<div class="cd'+(S.sel.indexOf(i)>-1?' on':'')+'" data-i="'+i+'"><div class="cv" style="background:'+col(b.h)+'">'+b.t+'</div><b>'+b.t+'</b><small>'+b.a+'</small></div>'}).join("")+'</div>';
+else el.innerHTML=(sc=="search"?'<div style="padding:0 12px 6px;font-size:12px;color:var(--t3)">'+v.length+' results</div>':'')+v.map(function(i){var b=B[i];return '<div class="row'+(S.sel.indexOf(i)>-1?' on':'')+'" data-i="'+i+'"><div class="th" style="background:'+col(b.h)+'"></div><span>'+b.t+'</span><span class="au">'+b.a+'</span><span>'+b.f.map(function(x){return '<span class="tag">'+x+'</span>'}).join("")+'</span></div>'}).join("");
+Array.prototype.forEach.call(el.querySelectorAll("[data-i]"),function(e){e.onclick=function(ev){pick(+this.dataset.i,ev,v)}})}
+function renderRight(){var show=S.rp&&S.scr=="home";$("rp").style.display=show?"flex":"none";if(!show)return;var n=S.sel.length,am=$("amb");
+am.style.display=S.am?"block":"none";am.style.background=n==1?"hsl("+B[S.sel[0]].h+",70%,50%)":"var(--ac)";
+var cv='<button id="cvb" style="margin-top:auto">'+(n>1?'Convert '+n+' books':'Convert')+' ▾</button>'+(S.pop?'<div class="pop"><div data-c="KEPUB">EPUB → KEPUB <small>kepubify</small></div><div data-c="AZW3">to AZW3 <small>ebook-convert</small></div><div style="color:var(--t3)">PDF <small>no route</small></div></div>':'');
+if(n==0)$("pb").innerHTML='<div class="emp">Select a book to see its details.</div>';
+else if(n==1){var b=B[S.sel[0]];$("pb").innerHTML='<div class="cover" style="background:'+col(b.h)+'">'+b.t+'</div><h3>'+b.t+'</h3><div class="meta"><b>Author</b><span>'+b.a+'</span>'+(b.p?'<b>Publisher</b><span>'+b.p+'</span>':'')+(b.y?'<b>Year</b><span>'+b.y+'</span>':'')+'<b>Formats</b><span>'+b.f.join(", ")+'</span></div><div class="desc">'+b.d+'</div>'+cv}
+else $("pb").innerHTML='<div class="big">'+n+' selected</div>'+S.sel.slice(0,5).map(function(i){return '<div class="sl">'+B[i].t+'</div>'}).join("")+(n>5?'<div class="sl">+ '+(n-5)+' more</div>':'')+cv;
+if($("cvb"))$("cvb").onclick=function(){S.pop=!S.pop;renderRight()};
+Array.prototype.forEach.call($("pb").querySelectorAll("[data-c]"),function(e){e.onclick=function(){var c=this.dataset.c;S.pop=false;S.sel.forEach(function(i){add("Converting to "+c+" · "+B[i].t.slice(0,16)+"…",0)});renderRight()}})}
+function renderBot(){var d=S.dev,el=$("bot"),n=S.sel.length;
+var dv=d==0?'<span class="dot" style="background:var(--t3)"></span>No reader connected':d==1?'<span class="dot" style="background:var(--ok)"></span>Kobo Libra 2 · E:\\ · 12.4 GB free':'<span class="dot" style="background:var(--wn)"></span>2 readers found · choose one';
+var cp=S.jobs.filter(function(j){return j.copy&&j.s!="done"}),run=cp.filter(function(j){return j.s=="run"})[0];
+el.innerHTML='<span id="dv" style="cursor:pointer" title="Mockup only: click to cycle states">'+dv+'</span><span class="sp"></span>'+(run?'<span style="color:var(--t2)">'+run.p+'%'+(cp.length>1?' · '+(cp.length-1)+' queued':'')+'</span><span style="width:110px"><span class="pg" style="display:block"><i style="width:'+run.p+'%"></i></span></span><button id="jx">Cancel</button>':'')+(d==1?'<button class="pri" id="snd"'+(n?'':' style="opacity:.45"')+'>'+(n>1?'Send '+n+' to reader':'Send to reader')+'</button>':d==2?'<button id="snd">Choose reader…</button>':'<span style="color:var(--t3)">Connect a reader to send books</span>');
+$("dv").onclick=function(){S.dev=(S.dev+1)%3;renderBot()};
+if($("snd")&&d==1)$("snd").onclick=function(){S.sel.forEach(function(i){add("Sending “"+B[i].t.slice(0,18)+"…”",1)})};
+if($("jx"))$("jx").onclick=function(){S.jobs=S.jobs.filter(function(j){return !(j.s=="run"&&j.copy)});render()}}
+function add(t,c){S.jobs.push({id:++JID,t:t,s:"wait",p:0,copy:c,m:"Done"});renderSide();renderBot();if(S.scr=="jobs")renderBd()}
+function renderTop(){$("tg-s").className="ic"+(S.side?" on":"");$("tg-r").className="ic"+(S.scr!="home"?" off":S.rp?" on":"")}
+setInterval(function(){var r=S.jobs.filter(function(j){return j.s=="run"})[0];if(!r){var w=S.jobs.filter(function(j){return j.s=="wait"})[0];if(w){w.s="run";renderSide();renderBot();if(S.scr=="jobs")renderBd()}return}
+r.p+=r.copy?4:5;if(r.p>=100){r.s="done";r.m=r.copy?"Sent to Kobo Libra 2":"Converted · not added to library";renderSide()}renderBot();if(S.scr=="jobs")renderBd()},110);
+function render(){renderSide();renderHd();renderBd();renderRight();renderBot();renderTop()}
+$("tg-s").onclick=function(){S.side=!S.side;render()};
+$("tg-r").onclick=function(){if(S.scr=="home"){S.rp=!S.rp;renderRight();renderTop()}};
+render();
+
+})();
+</script>
+</body></html>

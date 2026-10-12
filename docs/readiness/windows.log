@@ -1,0 +1,879 @@
+   Compiling rulibre-core v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.78s
+     Running unittests src\main.rs (target\debug\deps\rulibre-467c4d39aad10b80.exe)
+
+running 3 tests
+test app::tests::initial_scan_is_queued_and_completion_populates_table ... ok
+test app::tests::scan_failure_returns_to_setup_with_error ... ok
+test app::tests::changing_selection_ignores_old_metadata_including_return_to_same_book ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src\lib.rs (target\debug\deps\rulibre_core-bbb14fb5ee4203ba.exe)
+
+running 63 tests
+test converter::tests::discovery_distinguishes_missing_broken_and_ready_with_version_and_path ... ok
+test converter::tests::calibre_kepub_requires_successful_installed_plugin_probe ... ok
+test converter::tests::process_helper ... ignored, helper subprocess; only invoked by system_runner test
+test converter::tests::real_ebook_convert_keeps_library_read_only ... ignored, requires installed ebook-convert; real synthetic TXT -> EPUB -> KEPUB
+test converter::tests::missing_backend_returns_diagnostics_without_launching ... ok
+test converter::tests::routes_are_deterministic_target_aware_and_exclude_kepub_input ... ok
+test converter::tests::cancellation_before_launch_does_not_create_outputs ... ok
+test config::tests::partial_write_preserves_previous_config_and_cleans_temporary_file ... ok
+test converter::tests::invalid_sources_and_destinations_do_not_run_tools ... ok
+test converter::tests::existing_and_racing_destinations_are_never_overwritten ... ok
+test device::tests::file_selection_respects_exact_format_priority_and_path_order ... ok
+test converter::tests::success_returns_verified_result_and_separate_native_arguments ... ok
+test device::tests::device_destination_cannot_be_the_library ... ok
+test device::tests::failed_preparation_cleans_partial_files_without_changing_library ... ok
+test device::tests::kobo_preference_falls_back_only_when_route_is_unavailable ... ok
+test device::tests::converted_device_file_lives_through_copy_and_is_cleaned_afterwards ... ok
+test device_watch::tests::connect_disconnect_reconnect_and_unchanged_snapshot ... ok
+test device_watch::tests::drop_joins_and_closed_consumer_stops_worker ... ok
+test device_watch::tests::failed_poll_clears_selection_deduplicates_error_and_recovers ... ok
+test device_watch::tests::multiple_readers_preserve_existing_selection_but_never_choose_first ... ok
+test device::tests::missing_compatible_format_uses_available_route_or_explains_failure ... ok
+test device_watch::tests::recovery_before_first_success_emits_once_and_warnings_are_transported ... ok
+test device_watch::tests::replacement_without_empty_poll_updates_consumer ... ok
+test device_watch::tests::polling_and_delivery_run_outside_callers_thread ... ok
+test device_watch::tests::same_id_changed_mount_path_and_attributes_refresh_selected_device ... ok
+test device_watch::tests::stop_during_inflight_poll_waits_for_query_and_suppresses_delivery ... ok
+test converter::tests::directory_alias_into_library_is_rejected ... ok
+test jobs::tests::cancelling_waiting_job_releases_reservation_without_running_it ... ok
+test device_watch::tests::stop_interrupts_long_delay_and_joins_worker_idempotently ... ok
+test jobs::tests::conversion_stage_is_indeterminate_and_preserves_typed_error ... ok
+test converter::tests::failures_never_publish_and_clean_partial_results_preserving_library ... ok
+test device::tests::non_epub_source_can_be_prepared_in_two_steps_without_library_writes ... ok
+test jobs::tests::failure_and_panic_produce_one_terminal_state_and_worker_survives ... ok
+test jobs::tests::fifo_queue_is_bounded_and_does_not_block_caller ... ok
+test device::tests::ready_formats_need_no_converter_and_preserve_library ... ok
+test jobs::tests::parallelism_is_limited_but_independent_jobs_can_overlap ... ok
+test jobs::tests::drop_cancels_queue_and_joins_running_workers ... ok
+test jobs::tests::running_cancellation_uses_operation_token ... ok
+test jobs::tests::shutdown_is_idempotent_and_rejects_new_work ... ok
+test jobs::tests::successful_committed_result_wins_over_late_cancellation ... ok
+test jobs::tests::copy_events_report_actual_bytes_and_complete_before_success ... ok
+test jobs::tests::destinations_aliases_and_descendants_conflict_until_completion ... ok
+test device::tests::two_step_failure_cleans_intermediate_and_partial_files ... ok
+test jobs::tests::cancellation_reaches_copy_loop_and_cleans_partial_file ... ok
+test jobs::tests::metadata_job_returns_typed_data_errors_and_supports_queued_cancellation ... ok
+test scanner::tests::scan_cancellation_before_start_and_between_books_is_fatal ... ok
+test transfer::tests::disconnect_reports_cause_and_partial_path_then_reconnect_allows_cleanup ... ok
+test transfer::tests::missing_mount_root_is_never_recreated ... ok
+test transfer::tests::conflict_before_and_during_copy_preserves_existing_book ... ok
+test scanner::tests::book_access_failure_is_warning_and_other_books_survive ... ok
+test jobs::tests::scan_runs_on_worker_and_reports_ordered_states ... ok
+test transfer::tests::cancellation_before_and_during_copy_cleans_partial_file ... ok
+test transfer::tests::partial_write_and_permission_errors_clean_temp_without_final_file ... ok
+test volumes::linux::tests::mount_table_handles_renamed_paths_escapes_readonly_and_optional_fields ... ok
+test transfer::tests::volume_identity_read_only_and_unmounted_local_directory_are_rejected ... ok
+test volumes::linux::tests::rejects_malformed_records_and_excludes_mtp_network_and_bind_subdirectories ... ok
+test volumes::linux::tests::udev_labels_decode_spaces_and_unicode_bytes ... ok
+test transfer::tests::windows_directory_lock_returns_real_access_error ... ok
+test transfer::tests::size_change_aborts_publication ... ok
+test transfer::tests::success_preserves_library_normalizes_author_and_cleans_temp ... ok
+test transfer::tests::windows_junction_cannot_redirect_transfer_into_library ... ok
+test transfer::tests::readiness_pipeline_preserves_library_across_success_and_expected_failures ... ok
+test converter::tests::system_runner_kills_and_reaps_on_cancellation_and_probe_timeout ... ok
+
+test result: ok. 61 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.62s
+
+     Running unittests src\bin\scan_metadata.rs (target\debug\deps\scan_metadata-781d7de5a6a89dff.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\baseline.rs (target\debug\deps\baseline-76e016d9be81726c.exe)
+
+running 3 tests
+test temporary_fixture_is_removed_on_drop ... ok
+test scans_synthetic_library_and_reads_opf ... ok
+test public_send_rejects_synthetic_directories_without_mounted_volume ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\book_formats.rs (target\debug\deps\book_formats-2ed6c5781bbdb28d.exe)
+
+running 6 tests
+test recognition_excludes_service_unknown_and_temporary_files ... ok
+test recognized_converter_and_device_formats_are_separate ... ok
+test model_serialization_contains_typed_files_and_tagged_identity ... ok
+test ids_and_book_order_are_stable_and_scoped_to_library ... ok
+test duplicate_calibre_ids_warn_and_do_not_create_ambiguous_selection ... ok
+test scan_preserves_duplicates_exact_paths_and_order_independent_of_creation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\config_paths.rs (target\debug\deps\config_paths-bb47cc15cbd77bc1.exe)
+
+running 4 tests
+test user_paths_handle_empty_quotes_spaces_unicode_and_relative_paths ... ok
+test windows_locked_config_survives_failed_replacement ... ok
+test saved_library_is_rechecked_and_empty_editor_template_is_allowed ... ok
+test legacy_toml_and_replacement_keep_the_same_schema ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\device_detection.rs (target\debug\deps\device_detection-7551a608436d208d.exe)
+
+running 11 tests
+test native_volume_enumeration_smoke ... ignored, read-only smoke check against the host's actual mounted local volumes
+test ordinary_disk_documents_only_and_labels_without_signatures_are_not_readers ... ok
+test locked_marker_returns_io_warning_without_hiding_other_devices ... ok
+test mtp_and_network_filesystems_are_excluded_even_with_reader_markers ... ok
+test identity_order_alias_deduplication_and_mount_path_change_are_deterministic ... ok
+test conflicting_signatures_and_conflicting_labels_require_explicit_selection ... ok
+test malformed_empty_and_incomplete_signatures_do_not_classify ... ok
+test manual_selection_validates_mount_root_kind_layout_readonly_and_library ... ok
+test renamed_readers_are_recognized_without_any_special_mount_path_or_label ... ok
+test unavailable_or_bad_marker_is_warning_and_other_reader_survives ... ok
+test linked_reader_directory_is_not_a_signature_or_manual_destination ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests\errors.rs (target\debug\deps\errors-82bdb6251ef858d8.exe)
+
+running 7 tests
+test single_quotes_do_not_panic ... ok
+test locked_opf_returns_access_error ... ok
+test empty_directory_is_success_but_unreadable_directory_is_error ... ok
+test device_errors_retain_context_instead_of_strings ... ok
+test opf_distinguishes_absence_corruption_structure_and_io_failure ... ok
+test missing_and_non_directory_roots_return_errors ... ok
+test config_distinguishes_absence_bad_toml_and_io_failure ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\metadata.rs (target\debug\deps\metadata-263256d8cc4079b0.exe)
+
+running 6 tests
+test namespaced_fields_multiple_authors_series_identifiers_and_diagnostics ... ok
+test inaccessible_opf_is_warning_and_book_remains_visible ... ok
+test scanner_prefers_opf_names_and_keeps_sources_unchanged ... ok
+test missing_and_empty_fields_use_directory_fallback_independently ... ok
+test malformed_metadata_warns_without_losing_books_or_identity ... ok
+test html_descriptions_preserve_boundaries_and_decode_entities_once ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests rulibre_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.29s
+    Checking rulibre-gui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-gui)
+warning: unused imports: `BackendKind`, `BackendStatus`, and `Backend`
+ --> crates\rulibre-gui\src\types.rs:7:28
+  |
+7 | pub use conversion_model::{Backend, BackendKind, BackendStatus};
+  |                            ^^^^^^^  ^^^^^^^^^^^  ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `metadata_model::Metadata`
+  --> crates\rulibre-gui\src\types.rs:21:9
+   |
+21 | pub use metadata_model::Metadata;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DeviceEvent` and `Device`
+  --> crates\rulibre-gui\src\types.rs:28:24
+   |
+28 | pub use device_model::{Device, DeviceEvent};
+   |                        ^^^^^^  ^^^^^^^^^^^
+
+warning: function `accepts` is never used
+ --> crates\rulibre-gui\src\response_guard.rs:3:8
+  |
+3 | pub fn accepts(
+  |        ^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `Config` is never constructed
+  --> crates\rulibre-gui\src\types.rs:31:12
+   |
+31 | pub struct Config {
+   |            ^^^^^^
+
+warning: associated items `label`, `from_label`, `ebook_convert_input`, and `kepubify_input` are never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:19:18
+   |
+18 | impl Format {
+   | ----------- associated items in this implementation
+19 |     pub const fn label(self) -> &'static str {
+   |                  ^^^^^
+...
+31 |     pub fn from_label(label: &str) -> Option<Self> {
+   |            ^^^^^^^^^^
+...
+44 |     pub const fn ebook_convert_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^^^^^^
+...
+48 |     pub const fn kepubify_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^
+
+warning: struct `Book` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:68:12
+   |
+68 | pub struct Book {
+   |            ^^^^
+
+warning: enum `BackendKind` is never used
+ --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:6:10
+  |
+6 | pub enum BackendKind {
+  |          ^^^^^^^^^^^
+
+warning: method `program` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:12:12
+   |
+11 | impl BackendKind {
+   | ---------------- method in this implementation
+12 |     pub fn program(self) -> &'static str {
+   |            ^^^^^^^
+
+warning: enum `BackendStatus` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:21:10
+   |
+21 | pub enum BackendStatus {
+   |          ^^^^^^^^^^^^^
+
+warning: struct `Backend` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:28:12
+   |
+28 | pub struct Backend {
+   |            ^^^^^^^
+
+warning: struct `Metadata` is never constructed
+ --> crates\rulibre-gui\src\..\..\rulibre-core\src\metadata_model.rs:4:12
+  |
+4 | pub struct Metadata {
+  |            ^^^^^^^^
+
+warning: enum `DeviceKind` is never used
+ --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:6:10
+  |
+6 | pub enum DeviceKind {
+  |          ^^^^^^^^^^
+
+warning: struct `DeviceId` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:13:12
+   |
+13 | pub struct DeviceId(pub String);
+   |            ^^^^^^^^
+
+warning: enum `DetectionEvidence` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:16:10
+   |
+16 | pub enum DetectionEvidence {
+   |          ^^^^^^^^^^^^^^^^^
+
+warning: struct `Device` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:26:12
+   |
+26 | pub struct Device {
+   |            ^^^^^^
+
+warning: method `name` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:37:12
+   |
+36 | impl Device {
+   | ----------- method in this implementation
+37 |     pub fn name(&self) -> &'static str {
+   |            ^^^^
+
+warning: enum `DeviceChange` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:46:10
+   |
+46 | pub enum DeviceChange {
+   |          ^^^^^^^^^^^^
+
+warning: enum `DeviceEvent` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:54:10
+   |
+54 | pub enum DeviceEvent {
+   |          ^^^^^^^^^^^
+
+warning: methods `selected_device` and `message` are never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:67:12
+   |
+66 | impl DeviceEvent {
+   | ---------------- methods in this implementation
+67 |     pub fn selected_device(&self) -> Option<&Device> {
+   |            ^^^^^^^^^^^^^^^
+...
+80 |     pub fn message(&self) -> Result<String, String> {
+   |            ^^^^^^^
+
+warning: `rulibre-gui` (bin "rulibre-gui") generated 20 warnings (run `cargo fix --bin "rulibre-gui" -p rulibre-gui` to apply 3 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.92s
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `D:\Programming\rulibre-fork\target\debug\incremental\build_script_build-16q2zr5iep415\s-hn4ijmq9ao-1crjp88-working`
+
+warning: `rulibre-gui` (build script) generated 1 warning
+   Compiling rulibre-gui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-gui)
+warning: associated items `label`, `from_label`, `ebook_convert_input`, and `kepubify_input` are never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:19:18
+   |
+18 | impl Format {
+   | ----------- associated items in this implementation
+19 |     pub const fn label(self) -> &'static str {
+   |                  ^^^^^
+...
+31 |     pub fn from_label(label: &str) -> Option<Self> {
+   |            ^^^^^^^^^^
+...
+44 |     pub const fn ebook_convert_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^^^^^^
+...
+48 |     pub const fn kepubify_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `Book` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:68:12
+   |
+68 | pub struct Book {
+   |            ^^^^
+
+warning: method `program` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:12:12
+   |
+11 | impl BackendKind {
+   | ---------------- method in this implementation
+12 |     pub fn program(self) -> &'static str {
+   |            ^^^^^^^
+
+warning: `rulibre-gui` (bin "rulibre-gui" test) generated 3 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.37s
+     Running unittests src\main.rs (target\debug\deps\rulibre_gui-82457a0226096f34.exe)
+
+running 8 tests
+test commands::tests::backend_transport_preserves_capabilities_and_diagnostics ... ok
+test commands::tests::book_and_conversion_transport_match_frontend ... ok
+test commands::tests::config_metadata_and_all_identity_variants_match_transport ... ok
+test response_guard::tests::selection_and_request_generation_reject_stale_metadata ... ok
+test commands::tests::device_event_transport_preserves_identity_path_and_evidence ... ok
+test job_service::tests::synthetic_reader_failure_survives_transport_without_modifying_library ... ok
+test job_service::tests::scan_success_and_backend_error_survive_transport ... ok
+test job_service::tests::failed_conversion_releases_its_workspace ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `D:\Programming\rulibre-fork\target\debug\incremental\build_script_build-28nui0cd0kjof\s-hn4imxhgs4-1x3wxjw-working`
+
+warning: `rulibre-gui` (build script) generated 1 warning
+   Compiling rulibre-gui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-gui)
+warning: associated items `label`, `from_label`, `ebook_convert_input`, and `kepubify_input` are never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:19:18
+   |
+18 | impl Format {
+   | ----------- associated items in this implementation
+19 |     pub const fn label(self) -> &'static str {
+   |                  ^^^^^
+...
+31 |     pub fn from_label(label: &str) -> Option<Self> {
+   |            ^^^^^^^^^^
+...
+44 |     pub const fn ebook_convert_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^^^^^^
+...
+48 |     pub const fn kepubify_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `Book` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:68:12
+   |
+68 | pub struct Book {
+   |            ^^^^
+
+warning: `rulibre-gui` (bin "rulibre-gui") generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.92s
+   Compiling rulibre-gui v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-gui)
+warning: function `bootstrap` is never used
+  --> crates\rulibre-gui\src\app.rs:50:4
+   |
+50 | fn bootstrap(state: AppState) {
+   |    ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `install_global_keydown` is never used
+  --> crates\rulibre-gui\src\app.rs:89:4
+   |
+89 | fn install_global_keydown(state: AppState) {
+   |    ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `install_device_listener` is never used
+   --> crates\rulibre-gui\src\app.rs:102:4
+    |
+102 | fn install_device_listener(state: AppState) {
+    |    ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `dispatch` is never used
+  --> crates\rulibre-gui\src\components\context_menu.rs:38:4
+   |
+38 | fn dispatch(state: AppState, action: impl FnOnce(AppState)) {
+   |    ^^^^^^^^
+
+warning: function `convert_row` is never used
+  --> crates\rulibre-gui\src\components\convert.rs:46:4
+   |
+46 | fn convert_row(state: AppState, item: (usize, (String, String))) -> impl IntoView {
+   |    ^^^^^^^^^^^
+
+warning: function `sections` is never used
+  --> crates\rulibre-gui\src\components\detail.rs:51:4
+   |
+51 | fn sections(meta: Metadata, formats: Option<String>) -> AnyView {
+   |    ^^^^^^^^
+
+warning: function `field` is never used
+  --> crates\rulibre-gui\src\components\detail.rs:62:4
+   |
+62 | fn field(label: String, value: String) -> AnyView {
+   |    ^^^^^
+
+warning: function `book_info` is never used
+  --> crates\rulibre-gui\src\components\detail.rs:72:4
+   |
+72 | fn book_info(meta: &Metadata, formats: Option<String>) -> AnyView {
+   |    ^^^^^^^^^
+
+warning: function `publishing` is never used
+  --> crates\rulibre-gui\src\components\detail.rs:94:4
+   |
+94 | fn publishing(meta: &Metadata) -> AnyView {
+   |    ^^^^^^^^^^
+
+warning: function `tags` is never used
+   --> crates\rulibre-gui\src\components\detail.rs:123:4
+    |
+123 | fn tags(meta: &Metadata) -> AnyView {
+    |    ^^^^
+
+warning: function `description` is never used
+   --> crates\rulibre-gui\src\components\detail.rs:137:4
+    |
+137 | fn description(meta: &Metadata) -> AnyView {
+    |    ^^^^^^^^^^^
+
+warning: function `unrecognized` is never used
+   --> crates\rulibre-gui\src\components\detail.rs:151:4
+    |
+151 | fn unrecognized(meta: &Metadata) -> AnyView {
+    |    ^^^^^^^^^^^^
+
+warning: function `hint` is never used
+  --> crates\rulibre-gui\src\components\status_bar.rs:24:4
+   |
+24 | fn hint(k: &'static str, text: &'static str, on_click: impl Fn() + 'static) -> AnyView {
+   |    ^^^^
+
+warning: function `hint_pair` is never used
+  --> crates\rulibre-gui\src\components\status_bar.rs:34:4
+   |
+34 | fn hint_pair(
+   |    ^^^^^^^^^
+
+warning: function `action_btn` is never used
+  --> crates\rulibre-gui\src\components\status_bar.rs:49:4
+   |
+49 | fn action_btn(text: &'static str, on_click: impl Fn() + 'static) -> AnyView {
+   |    ^^^^^^^^^^
+
+warning: function `normal_hints` is never used
+  --> crates\rulibre-gui\src\components\status_bar.rs:58:4
+   |
+58 | fn normal_hints(state: AppState) -> impl IntoView {
+   |    ^^^^^^^^^^^^
+
+warning: function `detail_hints` is never used
+  --> crates\rulibre-gui\src\components\status_bar.rs:72:4
+   |
+72 | fn detail_hints(state: AppState) -> impl IntoView {
+   |    ^^^^^^^^^^^^
+
+warning: function `convert_hints` is never used
+  --> crates\rulibre-gui\src\components\status_bar.rs:93:4
+   |
+93 | fn convert_hints(state: AppState) -> impl IntoView {
+   |    ^^^^^^^^^^^^^
+
+warning: function `book_row` is never used
+  --> crates\rulibre-gui\src\components\table.rs:59:4
+   |
+59 | fn book_row(state: AppState, idx: usize, book: Book) -> impl IntoView {
+   |    ^^^^^^^^
+
+warning: function `open_row` is never used
+  --> crates\rulibre-gui\src\components\table.rs:85:8
+   |
+85 | pub fn open_row(state: AppState, idx: usize) {
+   |        ^^^^^^^^
+
+warning: struct `BookPathArg` is never constructed
+  --> crates\rulibre-gui\src\ipc.rs:41:8
+   |
+41 | struct BookPathArg {
+   |        ^^^^^^^^^^^
+
+warning: struct `LibraryPathArg` is never constructed
+  --> crates\rulibre-gui\src\ipc.rs:47:8
+   |
+47 | struct LibraryPathArg {
+   |        ^^^^^^^^^^^^^^
+
+warning: struct `TargetFormatsArgs` is never constructed
+  --> crates\rulibre-gui\src\ipc.rs:53:8
+   |
+53 | struct TargetFormatsArgs {
+   |        ^^^^^^^^^^^^^^^^^
+
+warning: struct `ConvertArgs` is never constructed
+  --> crates\rulibre-gui\src\ipc.rs:60:8
+   |
+60 | struct ConvertArgs {
+   |        ^^^^^^^^^^^
+
+warning: struct `SendArgs` is never constructed
+  --> crates\rulibre-gui\src\ipc.rs:68:8
+   |
+68 | struct SendArgs {
+   |        ^^^^^^^^
+
+warning: function `load_config` is never used
+  --> crates\rulibre-gui\src\ipc.rs:73:14
+   |
+73 | pub async fn load_config() -> Result<Option<Config>, String> {
+   |              ^^^^^^^^^^^
+
+warning: function `save_config` is never used
+  --> crates\rulibre-gui\src\ipc.rs:77:14
+   |
+77 | pub async fn save_config(library_path: String) -> Result<(), String> {
+   |              ^^^^^^^^^^^
+
+warning: function `validate_library` is never used
+  --> crates\rulibre-gui\src\ipc.rs:81:14
+   |
+81 | pub async fn validate_library(path: String) -> Result<String, String> {
+   |              ^^^^^^^^^^^^^^^^
+
+warning: function `parse_metadata` is never used
+  --> crates\rulibre-gui\src\ipc.rs:93:14
+   |
+93 | pub async fn parse_metadata(book_path: String) -> Result<Option<Metadata>, String> {
+   |              ^^^^^^^^^^^^^^
+
+warning: function `available_backends` is never used
+  --> crates\rulibre-gui\src\ipc.rs:97:14
+   |
+97 | pub async fn available_backends() -> Result<Vec<Backend>, String> {
+   |              ^^^^^^^^^^^^^^^^^^
+
+warning: function `target_formats` is never used
+   --> crates\rulibre-gui\src\ipc.rs:101:14
+    |
+101 | pub async fn target_formats(
+    |              ^^^^^^^^^^^^^^
+
+warning: function `convert_book` is never used
+   --> crates\rulibre-gui\src\ipc.rs:108:14
+    |
+108 | pub async fn convert_book(
+    |              ^^^^^^^^^^^^
+
+warning: function `send_to_device` is never used
+   --> crates\rulibre-gui\src\ipc.rs:131:14
+    |
+131 | pub async fn send_to_device(
+    |              ^^^^^^^^^^^^^^
+
+warning: function `current_device` is never used
+   --> crates\rulibre-gui\src\ipc.rs:143:14
+    |
+143 | pub async fn current_device() -> Result<Option<Device>, String> {
+    |              ^^^^^^^^^^^^^^
+
+warning: struct `EventPayload` is never constructed
+   --> crates\rulibre-gui\src\ipc.rs:148:8
+    |
+148 | struct EventPayload {
+    |        ^^^^^^^^^^^^
+
+warning: function `listen_device_events` is never used
+   --> crates\rulibre-gui\src\ipc.rs:155:8
+    |
+155 | pub fn listen_device_events<F>(on_event: F)
+    |        ^^^^^^^^^^^^^^^^^^^^
+
+warning: function `cancel_job` is never used
+   --> crates\rulibre-gui\src\ipc.rs:202:14
+    |
+202 | pub async fn cancel_job(id: JobId) -> Result<(), String> {
+    |              ^^^^^^^^^^
+
+warning: function `target_is_input` is never used
+  --> crates\rulibre-gui\src\keys.rs:12:4
+   |
+12 | fn target_is_input(ev: &KeyboardEvent) -> bool {
+   |    ^^^^^^^^^^^^^^^
+
+warning: function `handle_global_keydown` is never used
+  --> crates\rulibre-gui\src\keys.rs:22:8
+   |
+22 | pub fn handle_global_keydown(state: AppState, ev: KeyboardEvent) {
+   |        ^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `normal` is never used
+  --> crates\rulibre-gui\src\keys.rs:41:4
+   |
+41 | fn normal(state: AppState, key: &str, ev: &KeyboardEvent) {
+   |    ^^^^^^
+
+warning: function `detail` is never used
+  --> crates\rulibre-gui\src\keys.rs:66:4
+   |
+66 | fn detail(state: AppState, key: &str, ev: &KeyboardEvent) {
+   |    ^^^^^^
+
+warning: function `convert` is never used
+  --> crates\rulibre-gui\src\keys.rs:97:4
+   |
+97 | fn convert(state: AppState, key: &str, ev: &KeyboardEvent) {
+   |    ^^^^^^^
+
+warning: function `setup_global` is never used
+   --> crates\rulibre-gui\src\keys.rs:136:4
+    |
+136 | fn setup_global(_state: AppState, _key: &str, _ev: &KeyboardEvent) {
+    |    ^^^^^^^^^^^^
+
+warning: function `open_detail` is never used
+   --> crates\rulibre-gui\src\keys.rs:140:8
+    |
+140 | pub fn open_detail(state: AppState) {
+    |        ^^^^^^^^^^^
+
+warning: function `refresh_detail` is never used
+   --> crates\rulibre-gui\src\keys.rs:149:8
+    |
+149 | pub fn refresh_detail(state: AppState) {
+    |        ^^^^^^^^^^^^^^
+
+warning: function `close_detail` is never used
+   --> crates\rulibre-gui\src\keys.rs:175:8
+    |
+175 | pub fn close_detail(state: AppState) {
+    |        ^^^^^^^^^^^^
+
+warning: function `enter_convert` is never used
+   --> crates\rulibre-gui\src\keys.rs:182:8
+    |
+182 | pub fn enter_convert(state: AppState) {
+    |        ^^^^^^^^^^^^^
+
+warning: function `run_convert` is never used
+   --> crates\rulibre-gui\src\keys.rs:252:8
+    |
+252 | pub fn run_convert(state: AppState) {
+    |        ^^^^^^^^^^^
+
+warning: function `send_to_device` is never used
+   --> crates\rulibre-gui\src\keys.rs:323:8
+    |
+323 | pub fn send_to_device(state: AppState) {
+    |        ^^^^^^^^^^^^^^
+
+warning: function `accepts` is never used
+ --> crates\rulibre-gui\src\response_guard.rs:3:8
+  |
+3 | pub fn accepts(
+  |        ^^^^^^^
+
+warning: struct `ContextMenuData` is never constructed
+ --> crates\rulibre-gui\src\state.rs:6:12
+  |
+6 | pub struct ContextMenuData {
+  |            ^^^^^^^^^^^^^^^
+
+warning: enum `Mode` is never used
+  --> crates\rulibre-gui\src\state.rs:13:10
+   |
+13 | pub enum Mode {
+   |          ^^^^
+
+warning: enum `Focus` is never used
+  --> crates\rulibre-gui\src\state.rs:22:10
+   |
+22 | pub enum Focus {
+   |          ^^^^^
+
+warning: struct `AppState` is never constructed
+  --> crates\rulibre-gui\src\state.rs:28:12
+   |
+28 | pub struct AppState {
+   |            ^^^^^^^^
+
+warning: associated items `new`, `selected_book`, `next`, `previous`, `notify`, and `after_apply_filter` are never used
+   --> crates\rulibre-gui\src\state.rs:54:12
+    |
+ 53 | impl AppState {
+    | ------------- associated items in this implementation
+ 54 |     pub fn new() -> Self {
+    |            ^^^
+...
+100 |     pub fn selected_book(&self) -> Option<Book> {
+    |            ^^^^^^^^^^^^^
+...
+105 |     pub fn next(&self) {
+    |            ^^^^
+...
+117 |     pub fn previous(&self) {
+    |            ^^^^^^^^
+...
+129 |     pub fn notify(&self, result: Result<String, String>) {
+    |            ^^^^^^
+...
+143 |     pub fn after_apply_filter(&self) {
+    |            ^^^^^^^^^^^^^^^^^^
+
+warning: associated items `label`, `from_label`, `ebook_convert_input`, and `kepubify_input` are never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:19:18
+   |
+18 | impl Format {
+   | ----------- associated items in this implementation
+19 |     pub const fn label(self) -> &'static str {
+   |                  ^^^^^
+...
+31 |     pub fn from_label(label: &str) -> Option<Self> {
+   |            ^^^^^^^^^^
+...
+44 |     pub const fn ebook_convert_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^^^^^^
+...
+48 |     pub const fn kepubify_input(self) -> bool {
+   |                  ^^^^^^^^^^^^^^
+
+warning: struct `Book` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\book.rs:68:12
+   |
+68 | pub struct Book {
+   |            ^^^^
+
+warning: enum `BackendKind` is never used
+ --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:6:10
+  |
+6 | pub enum BackendKind {
+  |          ^^^^^^^^^^^
+
+warning: method `program` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:12:12
+   |
+11 | impl BackendKind {
+   | ---------------- method in this implementation
+12 |     pub fn program(self) -> &'static str {
+   |            ^^^^^^^
+
+warning: enum `BackendStatus` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:21:10
+   |
+21 | pub enum BackendStatus {
+   |          ^^^^^^^^^^^^^
+
+warning: struct `Backend` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\conversion_model.rs:28:12
+   |
+28 | pub struct Backend {
+   |            ^^^^^^^
+
+warning: struct `Metadata` is never constructed
+ --> crates\rulibre-gui\src\..\..\rulibre-core\src\metadata_model.rs:4:12
+  |
+4 | pub struct Metadata {
+  |            ^^^^^^^^
+
+warning: enum `DeviceKind` is never used
+ --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:6:10
+  |
+6 | pub enum DeviceKind {
+  |          ^^^^^^^^^^
+
+warning: struct `DeviceId` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:13:12
+   |
+13 | pub struct DeviceId(pub String);
+   |            ^^^^^^^^
+
+warning: enum `DetectionEvidence` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:16:10
+   |
+16 | pub enum DetectionEvidence {
+   |          ^^^^^^^^^^^^^^^^^
+
+warning: struct `Device` is never constructed
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:26:12
+   |
+26 | pub struct Device {
+   |            ^^^^^^
+
+warning: method `name` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:37:12
+   |
+36 | impl Device {
+   | ----------- method in this implementation
+37 |     pub fn name(&self) -> &'static str {
+   |            ^^^^
+
+warning: enum `DeviceChange` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:46:10
+   |
+46 | pub enum DeviceChange {
+   |          ^^^^^^^^^^^^
+
+warning: enum `DeviceEvent` is never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:54:10
+   |
+54 | pub enum DeviceEvent {
+   |          ^^^^^^^^^^^
+
+warning: methods `selected_device` and `message` are never used
+  --> crates\rulibre-gui\src\..\..\rulibre-core\src\device_model.rs:67:12
+   |
+66 | impl DeviceEvent {
+   | ---------------- methods in this implementation
+67 |     pub fn selected_device(&self) -> Option<&Device> {
+   |            ^^^^^^^^^^^^^^^
+...
+80 |     pub fn message(&self) -> Result<String, String> {
+   |            ^^^^^^^
+
+warning: `rulibre-gui` (bin "rulibre-gui") generated 70 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.47s
+WASM IPC: rejection, object rejection, malformed response, Unicode, serialization failure and job polling passed
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.42s
+   Compiling rulibre-core v0.1.2 (D:\Programming\rulibre-fork\crates\rulibre-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.76s
+     Running tests\device_detection.rs (target\debug\deps\device_detection-112780a4d9d0b70c.exe)
+
+running 1 test
+Mounted local filesystems: 4; enumeration warnings: 0; readers: 0; recognition warnings: 0
+test native_volume_enumeration_smoke ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running unittests src\lib.rs (target\debug\deps\rulibre_core-d8c8afb3472cd8df.exe)
+
+running 1 test
+test converter::tests::real_ebook_convert_keeps_library_read_only ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 1.66s
+
