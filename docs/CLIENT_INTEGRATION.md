@@ -2,6 +2,13 @@
 
 Пункт №14 PRE_UI_PLAN.md, 12 октября 2026 года.
 
+> **Историческая запись.** Клиент Tauri/Leptos (`rulibre-gui`) и WASM-проверки удалены
+> в пункте №17 UI_PLAN.md; команда `check-clients.ps1 -WasmIpc` и шаги про Tauri, WASM,
+> Node.js и `wasm-bindgen-cli` ниже больше не выполняются. Сейчас `scripts/check-clients.ps1`
+> проверяет только ядро и TUI, а графический клиент (iced, `crates/rulibre-ui`) проверяется
+> `scripts/check-ui.ps1`; см. [UI.md](UI.md). Транспортные модели `*_model.rs` остаются
+> обычными модулями ядра.
+
 ## Изменения
 
 TUI использует `JobExecutor::new(2, 16)` для сканирования, чтения метаданных,

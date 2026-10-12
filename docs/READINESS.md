@@ -3,6 +3,12 @@
 Пункт №15 PRE_UI_PLAN.md. Проверка 12 октября 2026 года, Windows 11/MSVC,
 Rust/Cargo 1.93.1, установленный wasm32-unknown-unknown.
 
+> **После №17 UI_PLAN.md** клиент Tauri/Leptos и WASM-проверки удалены. Ниже сохранён
+> результат прогона на момент №15; строки про Tauri, WASM и `-WasmIpc` относятся к
+> удалённому коду и повторно не воспроизводятся. Актуальные команды:
+> `scripts/check-readiness.ps1` (ядро, TUI, native volumes; флаги `-RealConverters`, `-Ui`)
+> и `scripts/check-ui.ps1` (iced UI). См. также матрицу UI в конце файла.
+
 ## Решение
 
 Ядро готово к разработке нового UI в пределах проверенных контрактов Windows.
@@ -36,15 +42,13 @@ CI настроен для Windows, Ubuntu 24.04 и macOS; удалённые з
 metadata/TUI; ядро/TUI проверяются с `-D warnings` и `--all-targets`.
 
 Общий скрипт `scripts/check-readiness.ps1` вызывает проверки клиентов №14,
-строгий Clippy и отдельный native volume smoke. `-WasmIpc` включает настоящий
-WASM binding с подменённым Tauri API в Node.js. Для него нужен matching
-`wasm-bindgen-cli` 0.2.108 (путь target/tools/bin либо PATH), Node.js и WASM target.
-Путь binding generator исправлен для Unix. `-RealConverters` явно включает
+строгий Clippy и отдельный native volume smoke. (На момент №15 флаг `-WasmIpc`
+запускал WASM binding в Node.js; он удалён в №17.) `-RealConverters` явно включает
 установленный Calibre; отсутствие нужной возможности приводит к провалу smoke,
 а не к ложному успеху. Этот флаг не включён в обязательный CI.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-readiness.ps1 -WasmIpc -RealConverters
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-readiness.ps1 -RealConverters
 ```
 
 Полный журнал: [readiness/windows.log](readiness/windows.log).
