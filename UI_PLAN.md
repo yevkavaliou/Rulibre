@@ -112,10 +112,11 @@ not done
 
 - 12 October 2026: added `crates/rulibre-ui` to workspace members only, with the planned module skeleton, inherited package metadata, `publish = false`, core dependency, iced 0.14 and env_logger. The five requested features were confirmed against https://docs.rs/crate/iced/0.14.0/features; default renderer/window-system features are retained.
 - Startup uses native decorations, title "Rulibre", size 1100×700, minimum 760×520, dark theme and a centered placeholder. No library or device operations are implemented.
-- Added `.github/workflows/ui.yml`: Windows, Ubuntu 24.04 and macOS run `scripts/check-ui.ps1`, with Linux Wayland/X11, xkbcommon and Vulkan packages and uploaded logs. Linux package installation still needs runner verification.
+- Added `.github/workflows/ui.yml`: Windows, Ubuntu 24.04 and macOS run `scripts/check-ui.ps1`, with Linux Wayland/X11, xkbcommon and Vulkan packages and uploaded logs. Linux package installation and the locked build passed on the Ubuntu 24.04 runner.
 - Local Windows checks passed: `cargo fmt --all -- --check`, `cargo clippy --locked --all-targets -- -D warnings`, `cargo test --locked`, and `scripts/check-ui.ps1` (locked UI build, Clippy with all targets, UI tests, workspace formatting). UI currently has no behavioural tests because this item adds only a placeholder; default workspace has 100 passing tests and 3 ignored tests.
 - `cargo run -p rulibre-ui --locked` was executed on Windows: process 7484 created an OS window with title "Rulibre", a nonzero window handle and `Responding = True`. Visual layout and minimum-size resizing have not been manually verified. Startup logged a malformed system font warning for `mstmc.ttf`; it did not prevent window creation.
-- Remote CI is pending. Status remains `not done` until all three UI matrix jobs pass. No physical reader verification was performed.
+- First remote run: https://github.com/yevkavaliou/Rulibre/actions/runs/38231733338. Windows and macOS UI checks passed; Linux exposed an existing core `collapsible_if` warning. The existing readiness run also exposed a macOS fixture trying to create an invalid UTF-8 filename (rejected by the filesystem). Collapsed the Linux conditional without changing behaviour and excluded macOS from that filesystem-specific test; it remains enabled on other Unix platforms. Repeated all local checks above successfully after these fixes.
+- Remote CI rerun is pending. Status remains `not done` until all three UI matrix jobs pass. No physical reader verification was performed. Implementation branch: `codex/ui-item-1`; initial commit: `bd3f42b`.
 
 ---
 
